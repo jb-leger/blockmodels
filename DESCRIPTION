@@ -1,0 +1,11 @@
+Package: lsbm
+Type: Package
+Title: Latent and Stochastic Block Model estimation by a V-EM algorithm
+Version: 0.1
+Date: 2013-11-20
+Author: Jean-Benoist Leger <jleger@agroparistech.fr>
+Maintainer: Jean-Benoist Leger <jleger@agroparistech.fr>
+Description: More about what it does (maybe more than one line)
+License: LGPL v2.1
+Depends: Rcpp (>= 0.10.6), RcppArmadillo (>= 0.3.920.1)
+LinkingTo: Rcpp, RcppArmadillo
