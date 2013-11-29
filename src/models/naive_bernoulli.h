@@ -53,6 +53,7 @@ class naive_bernoulli
                                      * pi(q,l);
         Rcpp::List Lpred;
         Lpred["adjacency"] = pred;
+
         return Lpred;
     }
     

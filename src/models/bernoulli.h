@@ -78,7 +78,8 @@ class bernoulli
     Rcpp::List prediction(SBM & membership)
     {
         Rcpp::List Lpred;
-        Lpred["adjacency"] = membership.Z * pi * membership.Z.t();
+        mat pred = membership.Z * pi * membership.Z.t();
+        Lpred["adjacency"] = pred;
         return Lpred;
     }
     
