@@ -92,8 +92,14 @@ model <- setRefClass("model",
 
             if(length(inits)>nb_init_max)
             {
-                quality <-
-                    c(mclapply(inits,.self$membership_init_quality),recursive=TRUE)
+                quality <- c(
+                        mclapply(
+                            inits,
+                            .self$membership_init_quality,
+                            mc.cores=detectCores()
+                        ),
+                        recursive=TRUE
+                     )
                 seuil <- (-sort(-quality))[floor(nb_init_max)]
                 filter <- filter & (quality >= seuil)
             }
