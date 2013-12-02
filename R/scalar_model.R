@@ -13,7 +13,8 @@ model <- setRefClass("model",
         PL = "numeric",                 # Pseudo liklihood of found models
         H = "numeric",                  # Entropy of found models
         ICL = "numeric",                # ICL of found models
-        predictions = "list"            # Prediction of found models
+        predictions = "list",           # Prediction of found models
+        precomputed = "list"
     ),
     methods = list(
         do_estim = function()
@@ -45,8 +46,16 @@ model <- setRefClass("model",
             ret<-FALSE
             while(which.max(ICL)*2>length(ICL) || Q<Qmax)
             {
-                inits <- .self$split_membership(Q)
                 Q<-Q+1
+                if(Q>length(ICL))
+                {
+                    inits <- list(.self$provide_init(Q))
+                }
+                else
+                {
+                    inits <- list()
+                }
+                inits <- c(inits,.self$split_membership(Q-1))
                 if(length(inits)>0)
                 {
                     r<-.self$do_with_inits(inits,Q,paste(message,'asc'))
@@ -227,7 +236,8 @@ model <- setRefClass("model",
                 already_merged <<- c(already_merged, list(membership))
                 return(membership$merges())
             }
-        }
+        },
+        precompute = function() {}
     )
 )
 
@@ -274,8 +284,45 @@ scalar_model <- setRefClass("scalar_model",
             {
                 return(dim(adj)[1]*(dim(adj)[2]))
             }
-        }
+        },
+        precompute = function()
+        {
+            if(membership_name == "SBM")
+            {
+                if(length(precomputed)>0)
+                {
+                    return()
+                }
+                else
+                {
+                    if(length(predictions)!=0)
+                    {
+                        error <- adj - predictions[[1]]$adjacency
+                        W<- error %*% t(error)
+                        W<-exp(W/sd(W))
+                        D<- diag(1/sqrt(rowSums(W)))
+                        L<- D %*% W %*% D
 
+                        precomputed$eigen <<- eigen(L, symmetric=TRUE)
+                    }
+                }
+            }
+        },
+        provide_init = function(Q)
+        {
+            .self$precompute()
+            if(membership_name == "SBM")
+            {
+                return(
+                    SBM(
+                        classif=lsbmkmeans(
+                            precomputed$eigen$vectors[,1:Q],
+                            Q
+                        )
+                    )
+                )
+            }
+        }
     )
 )
 
