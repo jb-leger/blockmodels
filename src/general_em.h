@@ -28,7 +28,7 @@ struct result
 };
 
 // em
-template<class membership_type, class model_type, class network_type>
+template<class membership_type, class model_type, class network_type, bool real_EM>
 inline
 result<membership_type,model_type> em(
             membership_type & membership_init,
@@ -46,35 +46,39 @@ result<membership_type,model_type> em(
     printf("J = %f\t H = %f\t PL = %f\n",res.H+res.PL,res.H,res.PL);
     #endif
     
-    double J=res.H+res.PL;
-    double old_J=0;
-    
-    do
+    if(real_EM)
     {
-        res.membership.e_step (res.model, net);
-        res.H = res.membership.entropy();
+
+        double J=res.H+res.PL;
+        double old_J=0;
+        
+        do
+        {
+            res.membership.e_step (res.model, net);
+            res.H = res.membership.entropy();
+            
+            #ifdef DEBUG_EM
+            std::cout << "E" << std::endl;
+            #endif
+            
+            res.PL = res.membership.m_step();
+            res.PL += m_step<membership_type,model_type> (res.membership, res.model, net);
+            
+            old_J=J;
+            
+            #ifdef DEBUG_EM
+            std::cout << "M" << std::endl;
+            printf("J = %f\t H = %f\t PL = %f\n",res.H+res.PL,res.H,res.PL);
+            #endif
+
+            J=res.H+res.PL;
+
+        } while(J-old_J > TOL_EM);
         
         #ifdef DEBUG_EM
-        std::cout << "E" << std::endl;
+        printf("EM finised\n");
         #endif
-        
-        res.PL = res.membership.m_step();
-        res.PL += m_step<membership_type,model_type> (res.membership, res.model, net);
-        
-        old_J=J;
-        
-        #ifdef DEBUG_EM
-        std::cout << "M" << std::endl;
-        printf("J = %f\t H = %f\t PL = %f\n",res.H+res.PL,res.H,res.PL);
-        #endif
-
-        J=res.H+res.PL;
-
-    } while(J-old_J > TOL_EM);
-    
-    #ifdef DEBUG_EM
-    printf("EM finised\n");
-    #endif
+    }
 
 
     return res;

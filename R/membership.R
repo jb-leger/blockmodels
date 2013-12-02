@@ -34,14 +34,45 @@ SBM <- setRefClass("SBM",
         into = function(memberships_list)
         {
             any(
-                c(
-                    lapply(
+                    sapply(
                         memberships_list,
-                        function(x){all(x$Z == Z)}
-                    ),
-                    recursive=TRUE
-                )
+                        function(x){
+                            if(all(dim(x$Z)==dim(Z)))
+                            {
+                                return(all(x$Z == Z))
+                            }
+                            else
+                            {
+                                return(FALSE)
+                            }
+                        }
+                    )
             )
+        },
+        into_v = function(membership_value_pairs_list)
+        {
+            bvec <- sapply(
+                        membership_value_pairs_list,
+                        function(x){
+                            if(all(dim(x$membership$Z)==dim(Z)))
+                            {
+                                return(all(x$membership$Z == Z))
+                            }
+                            else
+                            {
+                                return(FALSE)
+                            }
+                        }
+
+                    )
+            if(any(bvec))
+            {
+                return(membership_value_pairs_list[[which(bvec)]]$ICL)
+            }
+            else
+            {
+                return(FALSE)
+            }
         },
         to_cc = function()
         {
