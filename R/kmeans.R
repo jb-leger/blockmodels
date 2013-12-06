@@ -1,8 +1,14 @@
 
-lsbmkmeans <- function(coordinates,k){
+lsbmkmeans <- function(coordinates,k)
+{
 
     n <- dim(coordinates)[1]
     dim <- dim(coordinates)[2]
+
+    if(k==1)
+    {
+        return(matrix(1,n,1))
+    }
 
     centroids <- matrix(0,k,dim)
 
