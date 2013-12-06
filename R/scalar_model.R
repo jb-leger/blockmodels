@@ -26,7 +26,43 @@ scalar_model <- setRefClass("scalar_model",
                     Z[,q] <- Z[,q]*sub_classif
                     Z[,Q+1] <- Z[,Q+1]*(1-sub_classif)
                     result <- c(result, list(
-                            getRefClass(membership_name)(from_cc=list(Z=Z))
+                            SBM(from_cc=list(Z=Z))
+                        ))
+                }
+                return(result)
+            },
+            if(membership_name == "LBM")
+            {
+
+                Q1<-dim(membership$Z1)[1]
+                Q2<-dim(membership$Z1)[2]
+
+                result <- list()
+                for(q in 1:Q1)
+                {
+                    sub_classif <- coordinates_split(
+                        cbind(error),
+                        membership$Z1[,q]
+                        )
+                    Z1 <- cbind(membership$Z1,membership$Z1[,q])
+                    Z1[,q] <- Z1[,q]*sub_classif
+                    Z1[,Q1+1] <- Z1[,Q1+1]*(1-sub_classif)
+                    result <- c(result, list(
+                            LBM(from_cc=list(Z1=Z1,Z2=membership$Z2))
+                        ))
+                }
+                
+                for(q in 1:Q2)
+                {
+                    sub_classif <- coordinates_split(
+                        cbind(t(error)),
+                        membership$Z2[,q]
+                        )
+                    Z2 <- cbind(membership$Z2,membership$Z2[,q])
+                    Z2[,q] <- Z2[,q]*sub_classif
+                    Z2[,Q2+1] <- Z2[,Q2+1]*(1-sub_classif)
+                    result <- c(result, list(
+                            LBM(from_cc=list(Z1=membership$Z1,Z2=Z2))
                         ))
                 }
                 return(result)
@@ -68,6 +104,37 @@ scalar_model <- setRefClass("scalar_model",
                     }
                 }
             }
+            if(membership_name == "LBM")
+            {
+                if(length(precomputed)>0)
+                {
+                    return()
+                }
+                else
+                {
+                    if(length(predictions)!=0)
+                    {
+                        cat("comuptation of eigen decomposition used for initalizations")
+                        error <- adj - predictions[[1]]$adjacency
+                        
+                        W1<- error %*% t(error)
+                        W1<-1/(1+exp(-W1/sd(W1)))
+                        D1<- diag(1/sqrt(rowSums(W1)))
+                        L1<- D1 %*% W1 %*% D1
+
+                        precomputed$eigen1 <<- eigen(L1, symmetric=TRUE)
+                        
+                        W2<- t(error) %*% error
+                        W2<-1/(1+exp(-W2/sd(W2)))
+                        D2<- diag(1/sqrt(rowSums(W2)))
+                        L2<- D2 %*% W2 %*% D2
+
+                        precomputed$eigen2 <<- eigen(L2, symmetric=TRUE)
+                        
+                        cat("\n")
+                    }
+                }
+            }
         },
         provide_init = function(Q)
         {
@@ -75,13 +142,31 @@ scalar_model <- setRefClass("scalar_model",
             if(membership_name == "SBM")
             {
                 return(
-                    SBM(
-                        classif=lsbmkmeans(
-                            precomputed$eigen$vectors[,1:Q],
-                            Q
+                    list(
+                        SBM(
+                            classif=lsbmkmeans(
+                                precomputed$eigen$vectors[,1:Q],
+                                Q
+                            )
                         )
                     )
                 )
+            }
+            if(membership_name == "LBM")
+            {
+                result <- list()
+                for(Q1=1:(Q-1))
+                {
+                    Q2<-Q-Q1
+                    result[[Q1]] <- LBM(
+                        classif=list(
+                            lsbmkmeans(precomputed$eigen1$vectors[,1:Q1],Q1),
+                            lsbmkmeans(precomputed$eigen2$vectors[,1:Q2],Q2)
+                        )
+                    )
+                }
+
+                return(result)
             }
         }
     )
