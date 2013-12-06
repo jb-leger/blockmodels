@@ -97,9 +97,7 @@ inline
 void e_fixed_step(SBM & membership, bernoulli & model, bernoulli::network & net, mat & lZ)
 {
     lZ+= net.adjZD * membership.Z * log(model.pi).t()
-       + net.ones_minus_adj_ZD * membership.Z * log(1-model.pi).t()
-       + net.adjZDt * membership.Z * log(model.pi)
-       + net.ones_minus_adj_ZDt * membership.Z * log(1-model.pi);
+       + net.ones_minus_adj_ZD * membership.Z * log(1-model.pi).t();
 }
 
 template<>

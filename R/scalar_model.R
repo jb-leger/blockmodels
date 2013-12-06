@@ -14,40 +14,59 @@ model <- setRefClass("model",
         H = "numeric",                  # Entropy of found models
         ICL = "numeric",                # ICL of found models
         predictions = "list",           # Prediction of found models
-        precomputed = "list"
+        precomputed = "list",
+        last_reinitialization_effort = "numeric"
     ),
     methods = list(
-        do_estim = function()
+        do_estim = function(reinitialization_effort=1)
         {
+            if(!any(last_reinitialization_effort==reinitialization_effort))
+            {
+                already_splitted <<- list()
+                already_merged <<- list()
+                last_reinitialization_effort<<-reinitialization_effort
+                changing_effort <- TRUE
+            }
+            else
+            {
+                changing_effort <- FALSE
+            }
+            
             if(length(memberships)==0)
             {
+                cat("for 1 group, ")
                 do_with_inits(
                     list(getRefClass(membership_name)(
                         network_size=.self$number_of_nodes())),
-                    1,'pass 0')
+                    1,reinitialization_effort)
+                cat("\n")
             }
+
+            .self$precompute()
 
             l<-TRUE
             n<-1
             while(l)
             {
             
-                ra<-.self$estim_ascend(paste('pass',n))
-                rb<-.self$estim_descend(paste('pass',n))
+                ra<-.self$estim_ascend(paste('pass',n),reinitialization_effort,changing_effort)
+                rb<-.self$estim_descend(paste('pass',n),reinitialization_effort)
                 l<-ra||rb
                 n<-n+1
+                changing_effort<-FALSE
             }
         },
 
-        estim_ascend = function(message)
+        estim_ascend = function(message,reinitialization_effort,changing_effort)
         {
             Q <- 1
             Qmax <- length(ICL)
             ret<-FALSE
-            while(which.max(ICL)*2>length(ICL) || Q<Qmax)
+            while(which.max(ICL)*1.5>length(ICL) || Q<Qmax)
             {
                 Q<-Q+1
-                if(Q>length(ICL))
+                cat(paste(message,'asc, for',Q,'groups, '))
+                if(Q>length(ICL) || changing_effort)
                 {
                     inits <- list(.self$provide_init(Q))
                 }
@@ -58,58 +77,68 @@ model <- setRefClass("model",
                 inits <- c(inits,.self$split_membership(Q-1))
                 if(length(inits)>0)
                 {
-                    r<-.self$do_with_inits(inits,Q,paste(message,'asc'))
+                    r<-.self$do_with_inits(inits,Q,reinitialization_effort)
                     ret<-ret||r
                 }
                 else
                 {
+                    cat("already done")
                     if(Q>length(ICL))
                     {
                         break
                     }
                 }
+                cat("\n")
             }
             return(ret)
         },
 
-        estim_descend = function(message)
+        estim_descend = function(message,reinitialization_effort)
         {
             ret<-FALSE
             for(Q in seq(length(ICL)-1,2))
             {
+                cat(paste(message,'desc, for',Q,'groups, '))
                 inits <- merge_membership(memberships[[Q+1]])
 
                 if(length(inits)>0)
                 {
-                    r<-.self$do_with_inits(inits,Q,paste(message,'desc'))
+                    r<-.self$do_with_inits(inits,Q,reinitialization_effort)
                     ret<-ret||r
                 }
+                else
+                {
+                    cat("already done")
+                }
+                cat("\n")
 
             }
             return(ret)
         },
 
-        do_with_inits = function(inits,Q,message)
+        do_with_inits = function(inits,Q,reinitialization_effort)
         {
-            cat("\r")
-            cat(paste(message,"for",Q,"groups with",
-                      length(inits),"potential initalizations, "))
+            cat(paste("with",
+                      length(inits),"initalizations, "))
 
             filter <- sapply(inits,function(x){!x$into(.self$already_tried)})
 
-            nb_init_max <- sqrt(16*Q)
+            nb_init_max <- floor(1+2*reinitialization_effort*sqrt(Q))
 
+            cat(paste(sum(filter),"not already used, "))
+            
             if(length(inits)>nb_init_max)
             {
                 quality <- c(
                         mclapply(
                             inits,
                             .self$membership_init_quality,
-                            mc.cores=detectCores()
+                            mc.cores=detectCores(),
+                            mc.preschedule=FALSE
                         ),
                         recursive=TRUE
                      )
-                seuil <- (-sort(-quality))[floor(nb_init_max)]
+                seuil <- (-sort(-quality))[nb_init_max]
                 filter <- filter & (quality >= seuil)
             }
 
@@ -124,7 +153,8 @@ model <- setRefClass("model",
                 results<-mclapply(
                     inits,
                     .self$do_one_estim,
-                    mc.cores=detectCores())
+                    mc.cores=detectCores(),
+                    mc.preschedule=FALSE)
 
                 good <- FALSE
 
@@ -168,8 +198,6 @@ model <- setRefClass("model",
                 
                 }
             }
-            cat("\n")
-            cat("\r                                                                                 \r")
 
             return(ret)
         },
@@ -297,13 +325,16 @@ scalar_model <- setRefClass("scalar_model",
                 {
                     if(length(predictions)!=0)
                     {
+                        cat("comuptation of eigen decomposition used for initalizations")
                         error <- adj - predictions[[1]]$adjacency
                         W<- error %*% t(error)
-                        W<-exp(W/sd(W))
+                        W<-1/(1+exp(-W/sd(W)))
                         D<- diag(1/sqrt(rowSums(W)))
                         L<- D %*% W %*% D
 
                         precomputed$eigen <<- eigen(L, symmetric=TRUE)
+                        
+                        cat("\n")
                     }
                 }
             }

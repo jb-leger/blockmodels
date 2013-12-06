@@ -45,10 +45,7 @@ struct SBM
             
             // This operation should change nothing theorically (but
             // pratically...)
-            lZ -= repmat( mean(lZ,1), 1, lZ.n_cols );
-
-            // computational bugs
-            boundaries(lZ,-50,50);
+            lZ -= repmat( max(lZ,1), 1, lZ.n_cols );
 
             // After this lZ is not the new log(Z) but the new Z without
             // normalization
