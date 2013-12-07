@@ -1,17 +1,17 @@
 
 # membership definition
 
-SBM <- setRefClass("SBM",
+LBM <- setRefClass("LBM",
     fields = list(
         Z1="matrix",
         Z2="matrix"
     ),
     methods = list(
-        initialize = function(network_size=FALSE,classif=FALSE,from_cc=FALSE)
+        initialize = function(network_size=NULL,classif=NULL,from_cc=NULL)
         {
-            if(!classif[1])
+            if(length(classif)==0)
             {
-                if(network_size[1])
+                if(length(network_size)>0)
                 {
                     Z1 <<- matrix(1,nrow=network_size[1],ncol=1)
                     Z2 <<- matrix(1,nrow=network_size[2],ncol=1)
@@ -33,15 +33,15 @@ SBM <- setRefClass("SBM",
                 Q1 <- length(levels(fclassif1))
                 Q2 <- length(levels(fclassif2))
 
-                Z1 <<- matrix(0,nrow=length(classif1),ncol=Q)
-                Z2 <<- matrix(0,nrow=length(classif2),ncol=Q)
+                Z1 <<- matrix(0,nrow=length(classif1),ncol=Q1)
+                Z2 <<- matrix(0,nrow=length(classif2),ncol=Q2)
 
                 for(i in 1:length(classif1))
                 {
                     Z1[i,classif1[i]] <<- 1
                 }
                 
-                for(j in 1:length(classif2))
+                for(i in 1:length(classif2))
                 {
                     Z2[i,classif2[i]] <<- 1
                 }
@@ -97,7 +97,7 @@ SBM <- setRefClass("SBM",
         map = function()
         {
             list(
-                C1 = apply(Z1,1,which.max)
+                C1 = apply(Z1,1,which.max),
                 C2 = apply(Z2,1,which.max)
             )
         },
@@ -113,8 +113,8 @@ SBM <- setRefClass("SBM",
             {
                 for(k2 in (k1+1):Q1)
                 {
-                    Zn<-Z[,-k2]
-                    Zn[,k1]<-Z[,k1]+Z[,k2]
+                    Zn<-as.matrix(Z1[,-k2])
+                    Zn[,k1]<-Z1[,k1]+Z1[,k2]
                     result <- c(result,list(LBM(from_cc=list(Z1=Zn,Z2=Z2))))
                 }
             }
@@ -124,7 +124,7 @@ SBM <- setRefClass("SBM",
             {
                 for(k2 in (k1+1):Q2)
                 {
-                    Zn<-Z2[,-k2]
+                    Zn<-as.matrix(Z2[,-k2])
                     Zn[,k1]<-Z2[,k1]+Z2[,k2]
                     result <- c(result,list(LBM(from_cc=list(Z1=Z1,Z2=Zn))))
                 }

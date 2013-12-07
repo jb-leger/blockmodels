@@ -4,4 +4,5 @@
 #define TOL_F 1e-1
 #define TOL_EM 1e-6
 
-//#define DEBUG_EM 1
+//#define DEBUG_EM
+//#define DEBUG_E

@@ -58,8 +58,8 @@ struct LBM
             lZ1 -= repmat( mean(lZ1,1), 1, lZ1.n_cols );
             lZ2 -= repmat( mean(lZ2,1), 1, lZ2.n_cols );
 
-            boundaries(lZ1,-50,50);
-            boundaries(lZ2,-50,50);
+            lZ1 -= repmat( max(lZ1,1), 1, lZ1.n_cols );
+            lZ2 -= repmat( max(lZ2,1), 1, lZ2.n_cols );
 
             lZ1 = exp(lZ1);
             lZ2 = exp(lZ2);
@@ -76,6 +76,12 @@ struct LBM
             double step_size2 = max(max(abs( Z2-lZ2 )));
 
             step_size = (step_size1>step_size2) ? step_size1 : step_size2;
+            
+            #ifdef DEBUG_E
+                fprintf(stderr,"E iteration: %i %f [%f %f]\n",niter,step_size,step_size1,step_size2);
+            #endif
+
+            niter++;
 
             Z1 = lZ1;
             Z2 = lZ2;

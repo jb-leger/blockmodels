@@ -63,6 +63,10 @@ struct SBM
 
             niter++;
 
+            #ifdef DEBUG_E
+                fprintf(stderr,"E iteration: %i %f\n",niter,step_size);
+            #endif
+
         } while( step_size>TOL_F && niter<10);
     }
 

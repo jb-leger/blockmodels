@@ -30,12 +30,12 @@ scalar_model <- setRefClass("scalar_model",
                         ))
                 }
                 return(result)
-            },
+            }
             if(membership_name == "LBM")
             {
 
-                Q1<-dim(membership$Z1)[1]
-                Q2<-dim(membership$Z1)[2]
+                Q1<-dim(membership$Z1)[2]
+                Q2<-dim(membership$Z2)[2]
 
                 result <- list()
                 for(q in 1:Q1)
@@ -115,7 +115,7 @@ scalar_model <- setRefClass("scalar_model",
                     if(length(predictions)!=0)
                     {
                         cat("comuptation of eigen decomposition used for initalizations")
-                        error <- adj - predictions[[1]]$adjacency
+                        error <- adj - predictions[[2]]$adjacency
                         
                         W1<- error %*% t(error)
                         W1<-1/(1+exp(-W1/sd(W1)))
@@ -145,7 +145,7 @@ scalar_model <- setRefClass("scalar_model",
                     list(
                         SBM(
                             classif=lsbmkmeans(
-                                precomputed$eigen$vectors[,1:Q],
+                                as.matrix(precomputed$eigen$vectors[,1:Q]),
                                 Q
                             )
                         )
@@ -155,13 +155,13 @@ scalar_model <- setRefClass("scalar_model",
             if(membership_name == "LBM")
             {
                 result <- list()
-                for(Q1=1:(Q-1))
+                for(Q1 in 1:(Q-1))
                 {
                     Q2<-Q-Q1
                     result[[Q1]] <- LBM(
                         classif=list(
-                            lsbmkmeans(precomputed$eigen1$vectors[,1:Q1],Q1),
-                            lsbmkmeans(precomputed$eigen2$vectors[,1:Q2],Q2)
+                            lsbmkmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
+                            lsbmkmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)
                         )
                     )
                 }

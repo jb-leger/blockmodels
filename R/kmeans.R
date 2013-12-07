@@ -7,7 +7,7 @@ lsbmkmeans <- function(coordinates,k)
 
     if(k==1)
     {
-        return(matrix(1,n,1))
+        return(c(matrix(1,n,1)))
     }
 
     centroids <- matrix(0,k,dim)

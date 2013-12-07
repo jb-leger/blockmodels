@@ -15,9 +15,22 @@ model <- setRefClass("model",
         ICL = "numeric",                # ICL of found models
         predictions = "list",           # Prediction of found models
         precomputed = "list",
-        last_reinitialization_effort = "numeric"
+        last_reinitialization_effort = "numeric",
+        display = "list",
+        allICLs= "matrix"
     ),
     methods = list(
+        bdisp = function(mode,level)
+        {
+            if(is.null(display[['text']]))
+            {
+                return(FALSE);
+            }
+            else
+            {
+                return (level<=display[['text']])
+            }
+        },
         do_estim = function(reinitialization_effort=1)
         {
             if(!any(last_reinitialization_effort==reinitialization_effort))
@@ -34,12 +47,37 @@ model <- setRefClass("model",
             
             if(length(memberships)==0)
             {
-                cat("for 1 group, ")
-                do_with_inits(
-                    list(getRefClass(membership_name)(
-                        network_size=.self$number_of_nodes())),
-                    1,reinitialization_effort)
-                cat("\n")
+                if(membership_name=="LBM")
+                {
+                    if(bdisp("text",1))
+                    {
+                        cat("for 2 group, ")
+                    }
+                    do_with_inits(
+                        list(getRefClass(membership_name)(
+                            network_size=.self$number_of_nodes())),
+                        2,reinitialization_effort)
+                    if(bdisp("text",1))
+                    {
+                        cat("\n")
+                    }
+                }
+                else
+                {
+                    if(bdisp("text",1))
+                    {
+                        cat("for 1 group, ")
+                    }
+                    do_with_inits(
+                        list(getRefClass(membership_name)(
+                            network_size=.self$number_of_nodes())),
+                        1,reinitialization_effort)
+
+                    if(bdisp("text",1))
+                    {
+                        cat("\n")
+                    }
+                }
             }
 
             .self$precompute()
@@ -59,16 +97,27 @@ model <- setRefClass("model",
 
         estim_ascend = function(message,reinitialization_effort,changing_effort)
         {
-            Q <- 1
+            if(membership_name=="LBM")
+            {
+                Q <- 2
+            }
+            else
+            {
+                Q <- 1
+            }
             Qmax <- length(ICL)
             ret<-FALSE
             while(which.max(ICL)*1.5>length(ICL) || Q<Qmax)
             {
                 Q<-Q+1
-                cat(paste(message,'asc, for',Q,'groups, '))
+
+                if(bdisp("text",1))
+                {
+                    cat(paste(message,'asc, for',Q,'groups, '))
+                }
                 if(Q>length(ICL) || changing_effort)
                 {
-                    inits <- list(.self$provide_init(Q))
+                    inits <- .self$provide_init(Q)
                 }
                 else
                 {
@@ -82,13 +131,19 @@ model <- setRefClass("model",
                 }
                 else
                 {
-                    cat("already done")
+                    if(bdisp("text",1))
+                    {
+                        cat("already done")
+                    }
                     if(Q>length(ICL))
                     {
                         break
                     }
                 }
-                cat("\n")
+                if(bdisp("text",1))
+                {
+                    cat("\n")
+                }
             }
             return(ret)
         },
@@ -96,9 +151,20 @@ model <- setRefClass("model",
         estim_descend = function(message,reinitialization_effort)
         {
             ret<-FALSE
-            for(Q in seq(length(ICL)-1,2))
+            if(membership_name=="LBM")
             {
-                cat(paste(message,'desc, for',Q,'groups, '))
+                Qmin <- 2
+            }
+            else
+            {
+                Qmin <- 1
+            }
+            for(Q in seq(length(ICL)-1,Qmin+1))
+            {
+                if(bdisp("text",1))
+                {
+                    cat(paste(message,'desc, for',Q,'groups, '))
+                }
                 inits <- merge_membership(memberships[[Q+1]])
 
                 if(length(inits)>0)
@@ -108,9 +174,15 @@ model <- setRefClass("model",
                 }
                 else
                 {
-                    cat("already done")
+                    if(bdisp("text",1))
+                    {
+                        cat("already done")
+                    }
                 }
-                cat("\n")
+                if(bdisp("text",1))
+                {
+                    cat("\n")
+                }
 
             }
             return(ret)
@@ -118,14 +190,20 @@ model <- setRefClass("model",
 
         do_with_inits = function(inits,Q,reinitialization_effort)
         {
-            cat(paste("with",
+            if(bdisp("text",1))
+            {
+                cat(paste("with",
                       length(inits),"initalizations, "))
+            }
 
             filter <- sapply(inits,function(x){!x$into(.self$already_tried)})
 
-            nb_init_max <- floor(1+2*reinitialization_effort*sqrt(Q))
+            nb_init_max <- floor(1+4*reinitialization_effort*sqrt(Q))
 
-            cat(paste(sum(filter),"not already used, "))
+            if(bdisp("text",1))
+            {
+                cat(paste(sum(filter),"not already used, "))
+            }
             
             if(length(inits)>nb_init_max)
             {
@@ -143,7 +221,11 @@ model <- setRefClass("model",
             }
 
             inits <- inits[filter]
-            cat(paste(length(inits),"are tried"))
+
+            if(bdisp("text",1))
+            {
+                cat(paste(length(inits),"are tried"))
+            }
 
             ret<-FALSE
 
@@ -181,8 +263,14 @@ model <- setRefClass("model",
 
                 already_tried <<- c(already_tried, inits)
 
+
                 if(good)
                 {
+                    if(bdisp("text",2))
+                    {
+                        cat(paste("usefull, max ICL found",max(ICLs),"previous",ICL[Q]))
+                    }
+
                     kmax<-which.max(ICLs)
 
                     r<-results[[kmax]]
@@ -195,7 +283,27 @@ model <- setRefClass("model",
                     ICL[Q] <<- r$PL - .5*(r$model$n_parameters *
                         log(.self$data_number()) + memberships[[Q]]$ICL_penalty())
                     ret<-TRUE
+                    if(prod(dim(allICLs))==0)
+                    {
+                        allICLs<<-matrix(0,0,2)
+                    }
+                    allICLs<<-rbind(allICLs,c(Q,ICL[Q]))
+                    
+                    if(bdisp("plot",1))
+                    {
+                        plot(allICLs)
+                        points(ICL,type='b',col='red')
+                    }
+
+
                 
+                }
+                else
+                {
+                    if(bdisp("text",2))
+                    {
+                        cat(paste("useless, max ICL found",max(ICLs),"previous",ICL[Q]))
+                    }
                 }
             }
 
