@@ -14,6 +14,7 @@ using namespace arma;
 #include "general_em.h"
 #include "models/naive_bernoulli.h"
 #include "models/bernoulli.h"
+#include "models/poisson.h"
 
 
 template<class membership_type, class model_type, class network_type, bool real_EM>
@@ -41,11 +42,12 @@ Rcpp::List dispatcher_model(membership_type & membership_init,
                 membership_init, network_from_R);
 
     if(model_name == "bernoulli")
-    {
-
         return estim<membership_type, bernoulli, bernoulli::network, real_EM>(
                 membership_init, network_from_R);
-    }
+    
+    if(model_name == "poisson")
+        return estim<membership_type, poisson, poisson::network, real_EM>(
+                membership_init, network_from_R);
 
     // What we are doing here ? Nothing.
     return Rcpp::List();
