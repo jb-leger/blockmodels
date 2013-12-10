@@ -24,18 +24,18 @@ class naive_bernoulli
     unsigned int n_parameters;
     mat pi;
 
-    naive_bernoulli(SBM & membership)
+    naive_bernoulli(SBM & membership, naive_bernoulli::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
-        pi.fill(.5);
+        pi.fill(accu(net.adj)/(net.adj.n_rows*net.adj.n_cols));
     }
     
-    naive_bernoulli(LBM & membership)
+    naive_bernoulli(LBM & membership, naive_bernoulli::network & net)
     {
         n_parameters = membership.Z1.n_cols * membership.Z2.n_cols;
         pi.set_size(membership.Z1.n_cols,membership.Z2.n_cols);
-        pi.fill(.5);
+        pi.fill(accu(net.adj)/(net.adj.n_rows*net.adj.n_cols));
     }
 
     inline

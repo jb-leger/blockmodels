@@ -50,18 +50,16 @@ class bernoulli
     unsigned int n_parameters;
     mat pi;
 
-    bernoulli(SBM & membership)
+    bernoulli(SBM & membership, bernoulli::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
-        pi.fill(.5);
     }
     
-    bernoulli(LBM & membership)
+    bernoulli(LBM & membership, bernoulli::network & net)
     {
         n_parameters = membership.Z1.n_cols * membership.Z2.n_cols;
         pi.set_size(membership.Z1.n_cols,membership.Z2.n_cols);
-        pi.fill(.5);
     }
 
     inline

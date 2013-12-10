@@ -47,18 +47,16 @@ class poisson
     unsigned int n_parameters;
     mat lambda;
 
-    poisson(SBM & membership)
+    poisson(SBM & membership, poisson::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         lambda.set_size(membership.Z.n_cols,membership.Z.n_cols);
-        lambda.fill(.5);
     }
     
-    poisson(LBM & membership)
+    poisson(LBM & membership, poisson::network & net)
     {
         n_parameters = membership.Z1.n_cols * membership.Z2.n_cols;
         lambda.set_size(membership.Z1.n_cols,membership.Z2.n_cols);
-        lambda.fill(.5);
     }
 
     inline

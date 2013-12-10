@@ -9,9 +9,10 @@ struct result
     double PL;
     double H;
     
-    result(membership_type membership_init) : 
+    template<class network_type>
+    result(membership_type membership_init, network_type net) : 
         membership(membership_init),
-        model(membership_init)
+        model(membership_init, net)
     {}
 
     Rcpp::List export_to_R()
@@ -35,7 +36,7 @@ result<membership_type,model_type> em(
             network_type & net
         )
 {
-    result<membership_type,model_type> res(membership_init);
+    result<membership_type,model_type> res(membership_init,net);
 
     res.H = res.membership.entropy();
     res.PL = res.membership.m_step();
