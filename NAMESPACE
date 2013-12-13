@@ -1,2 +1,3 @@
 useDynLib(lsbm)
-exportPattern("^[[:alpha:]]+")
+
+export(bernoulli)

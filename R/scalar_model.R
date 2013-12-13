@@ -1,11 +1,15 @@
 
-scalar_model <- setRefClass("scalar_model",
+setRefClass("scalar_model",
     contains = "model",
     fields = list(
         adj = "matrix"
     ),
     methods = list(
         number_of_nodes = function() { dim(adj) },
+        show_network = function()
+        {
+            paste(nrow(adj),"x",ncol(adj),"scalar network")
+        },  
         network_to_cc = function() { list(adjacency = adj) },
         split_membership_model = function(Q)
         {
@@ -26,7 +30,7 @@ scalar_model <- setRefClass("scalar_model",
                     Z[,q] <- Z[,q]*sub_classif
                     Z[,Q+1] <- Z[,Q+1]*(1-sub_classif)
                     result <- c(result, list(
-                            SBM(from_cc=list(Z=Z))
+                            getRefClass(membership_name)(from_cc=list(Z=Z))
                         ))
                 }
                 return(result)
@@ -48,7 +52,7 @@ scalar_model <- setRefClass("scalar_model",
                     Z1[,q] <- Z1[,q]*sub_classif
                     Z1[,Q1+1] <- Z1[,Q1+1]*(1-sub_classif)
                     result <- c(result, list(
-                            LBM(from_cc=list(Z1=Z1,Z2=membership$Z2))
+                            getRefClass(membership_name)(from_cc=list(Z1=Z1,Z2=membership$Z2))
                         ))
                 }
                 
@@ -62,7 +66,7 @@ scalar_model <- setRefClass("scalar_model",
                     Z2[,q] <- Z2[,q]*sub_classif
                     Z2[,Q2+1] <- Z2[,Q2+1]*(1-sub_classif)
                     result <- c(result, list(
-                            LBM(from_cc=list(Z1=membership$Z1,Z2=Z2))
+                            getRefClass(membership_name)(from_cc=list(Z1=membership$Z1,Z2=Z2))
                         ))
                 }
                 return(result)
@@ -91,7 +95,10 @@ scalar_model <- setRefClass("scalar_model",
                 {
                     if(length(predictions)!=0)
                     {
-                        cat("comuptation of eigen decomposition used for initalizations")
+                        if(textlevel>=1)
+                        {
+                            cat("comuptation of eigen decomposition used for initalizations")
+                        }
                         error <- adj - predictions[[1]]$adjacency
                         W<- error %*% t(error)
                         W<-1/(1+exp(-W/sd(W)))
@@ -114,7 +121,10 @@ scalar_model <- setRefClass("scalar_model",
                 {
                     if(length(predictions)!=0)
                     {
-                        cat("comuptation of eigen decomposition used for initalizations")
+                        if(textlevel>=1)
+                        {
+                            cat("comuptation of eigen decomposition used for initalizations")
+                        }
                         error <- adj - predictions[[2]]$adjacency
                         
                         W1<- error %*% t(error)
@@ -143,7 +153,7 @@ scalar_model <- setRefClass("scalar_model",
             {
                 return(
                     list(
-                        SBM(
+                        getRefClass(membership_name)(
                             classif=lsbmkmeans(
                                 as.matrix(precomputed$eigen$vectors[,1:Q]),
                                 Q
@@ -158,7 +168,7 @@ scalar_model <- setRefClass("scalar_model",
                 for(Q1 in 1:(Q-1))
                 {
                     Q2<-Q-Q1
-                    result[[Q1]] <- LBM(
+                    result[[Q1]] <- getRefClass(membership_name)(
                         classif=list(
                             lsbmkmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
                             lsbmkmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)

@@ -1,7 +1,7 @@
 
 # membership definition
 
-LBM <- setRefClass("LBM",
+setRefClass("LBM",
     fields = list(
         Z1="matrix",
         Z2="matrix"
@@ -46,6 +46,20 @@ LBM <- setRefClass("LBM",
                     Z2[i,classif2[i]] <<- 1
                 }
             }
+        },
+        show_short = function()
+        {
+            paste(ncol(Z1),"row groups,",ncol(Z2),"col groups")
+        },
+        show = function()
+        {
+            cat("LBM membership\n")
+            cat(paste("    Groups:",ncol(Z1),"row groups,",ncol(Z2),"col groups\n"))
+            cat(paste("    Nodes:",nrow(Z1),"row nodes,",nrow(Z2),"col nodes\n"))
+            cat("    Usefull fields and methods:\n")
+            cat("        $Z1 : matrix of row nodes memberships\n")
+            cat("        $Z2 : matrix of col nodes memberships\n")
+            cat("        $plot() : plot the memberships\n")
         },
         into = function(memberships_list)
         {
@@ -115,7 +129,7 @@ LBM <- setRefClass("LBM",
                 {
                     Zn<-as.matrix(Z1[,-k2])
                     Zn[,k1]<-Z1[,k1]+Z1[,k2]
-                    result <- c(result,list(LBM(from_cc=list(Z1=Zn,Z2=Z2))))
+                    result <- c(result,list(getRefClass('LBM')(from_cc=list(Z1=Zn,Z2=Z2))))
                 }
             }
             
@@ -126,7 +140,7 @@ LBM <- setRefClass("LBM",
                 {
                     Zn<-as.matrix(Z2[,-k2])
                     Zn[,k1]<-Z2[,k1]+Z2[,k2]
-                    result <- c(result,list(LBM(from_cc=list(Z1=Z1,Z2=Zn))))
+                    result <- c(result,list(getRefClass('LBM')(from_cc=list(Z1=Z1,Z2=Zn))))
                 }
             }
 

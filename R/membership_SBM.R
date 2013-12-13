@@ -1,7 +1,7 @@
 
 # membership definition
 
-SBM <- setRefClass("SBM",
+setRefClass("SBM",
     fields = list(
         Z="matrix"
     ),
@@ -30,6 +30,19 @@ SBM <- setRefClass("SBM",
                     Z[i,classif[i]] <<- 1
                 }
             }
+        },
+        show_short = function()
+        {
+            paste(ncol(Z),"groups")
+        },
+        show = function()
+        {
+            cat("SBM membership\n")
+            cat("    Groups:",paste(ncol(Z),"groups\n"))
+            cat("    Nodes:",paste(nrow(Z),"nodes\n"))
+            cat("    Usefull fields and methods:\n")
+            cat("        $Z : matrix of nodes memberships\n")
+            cat("        $plot() : plot the memberships\n")
         },
         into = function(memberships_list)
         {
@@ -98,7 +111,7 @@ SBM <- setRefClass("SBM",
                 {
                     Z2<-Z[,-k2]
                     Z2[,k1]<-Z[,k1]+Z[,k2]
-                    result <- c(result,list(SBM(from_cc=list(Z=Z2))))
+                    result <- c(result,list(getRefClass('SBM')(from_cc=list(Z=Z2))))
                 }
             }
             return(result)

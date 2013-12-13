@@ -1,5 +1,5 @@
 
-model <- setRefClass("model",
+setRefClass("model",
     fields = list(
         model_name = "character",       # e.g. "bernoulli"
         membership_name = "character",  # e.g. "SBM"
@@ -16,23 +16,31 @@ model <- setRefClass("model",
         predictions = "list",           # Prediction of found models
         precomputed = "list",
         last_reinitialization_effort = "numeric",
-        display = "list",
-        allICLs= "matrix"
+        allICLs= "matrix",
+        textlevel = "numeric",
+        plotlevel = "numeric"
     ),
     methods = list(
-        bdisp = function(mode,level)
+        init_levels = function()
         {
-            if(is.null(display[['text']]))
+            if(length(textlevel)==0)
             {
-                return(FALSE);
+                textlevel<<-1
             }
-            else
+
+            if(length(plotlevel)==0)
             {
-                return (level<=display[['text']])
+                plotlevel<<-1
             }
         },
-        do_estim = function(reinitialization_effort=1)
+        estimate = function(reinitialization_effort=1)
         {
+            .self$init_levels()
+            
+            if(plotlevel>=1)
+            {
+                dev.new()
+            }
             if(!any(last_reinitialization_effort==reinitialization_effort))
             {
                 already_splitted <<- list()
@@ -49,7 +57,7 @@ model <- setRefClass("model",
             {
                 if(membership_name=="LBM")
                 {
-                    if(bdisp("text",1))
+                    if(textlevel>=1)
                     {
                         cat("for 2 group, ")
                     }
@@ -57,14 +65,14 @@ model <- setRefClass("model",
                         list(getRefClass(membership_name)(
                             network_size=.self$number_of_nodes())),
                         2,reinitialization_effort)
-                    if(bdisp("text",1))
+                    if(textlevel>=1)
                     {
                         cat("\n")
                     }
                 }
                 else
                 {
-                    if(bdisp("text",1))
+                    if(textlevel>=1)
                     {
                         cat("for 1 group, ")
                     }
@@ -73,7 +81,7 @@ model <- setRefClass("model",
                             network_size=.self$number_of_nodes())),
                         1,reinitialization_effort)
 
-                    if(bdisp("text",1))
+                    if(textlevel>=1)
                     {
                         cat("\n")
                     }
@@ -111,7 +119,7 @@ model <- setRefClass("model",
             {
                 Q<-Q+1
 
-                if(bdisp("text",1))
+                if(textlevel>=1)
                 {
                     cat(paste(message,'asc, for',Q,'groups, '))
                 }
@@ -131,7 +139,7 @@ model <- setRefClass("model",
                 }
                 else
                 {
-                    if(bdisp("text",1))
+                    if(textlevel>=1)
                     {
                         cat("already done")
                     }
@@ -140,7 +148,7 @@ model <- setRefClass("model",
                         break
                     }
                 }
-                if(bdisp("text",1))
+                if(textlevel>=1)
                 {
                     cat("\n")
                 }
@@ -161,7 +169,7 @@ model <- setRefClass("model",
             }
             for(Q in seq(length(ICL)-1,Qmin+1))
             {
-                if(bdisp("text",1))
+                if(textlevel>=1)
                 {
                     cat(paste(message,'desc, for',Q,'groups, '))
                 }
@@ -174,12 +182,12 @@ model <- setRefClass("model",
                 }
                 else
                 {
-                    if(bdisp("text",1))
+                    if(textlevel>=1)
                     {
                         cat("already done")
                     }
                 }
-                if(bdisp("text",1))
+                if(textlevel>=1)
                 {
                     cat("\n")
                 }
@@ -190,17 +198,25 @@ model <- setRefClass("model",
 
         do_with_inits = function(inits,Q,reinitialization_effort)
         {
-            if(bdisp("text",1))
+            if(textlevel>=1)
             {
                 cat(paste("with",
                       length(inits),"initalizations, "))
             }
 
-            filter <- sapply(inits,function(x){!x$into(.self$already_tried)})
+            filter <- c(
+                        mclapply(
+                            inits,
+                            function(x){!x$into(.self$already_tried)},
+                            mc.cores=detectCores(),
+                            mc.preschedule=TRUE
+                        ),
+                        recursive=TRUE
+                     )
 
             nb_init_max <- floor(1+4*reinitialization_effort*sqrt(Q))
 
-            if(bdisp("text",1))
+            if(textlevel>=1)
             {
                 cat(paste(sum(filter),"not already used, "))
             }
@@ -222,7 +238,7 @@ model <- setRefClass("model",
 
             inits <- inits[filter]
 
-            if(bdisp("text",1))
+            if(textlevel>=1)
             {
                 cat(paste(length(inits),"are tried"))
             }
@@ -266,7 +282,7 @@ model <- setRefClass("model",
 
                 if(good)
                 {
-                    if(bdisp("text",2))
+                    if(textlevel>=2)
                     {
                         cat(paste("usefull, max ICL found",max(ICLs),"previous",ICL[Q]))
                     }
@@ -289,7 +305,7 @@ model <- setRefClass("model",
                     }
                     allICLs<<-rbind(allICLs,c(Q,ICL[Q]))
                     
-                    if(bdisp("plot",1))
+                    if(plotlevel>=1)
                     {
                         plot(allICLs)
                         points(ICL,type='b',col='red')
@@ -300,7 +316,7 @@ model <- setRefClass("model",
                 }
                 else
                 {
-                    if(bdisp("text",2))
+                    if(textlevel>=2)
                     {
                         cat(paste("useless, max ICL found",max(ICLs),"previous",ICL[Q]))
                     }
@@ -373,7 +389,48 @@ model <- setRefClass("model",
                 return(membership$merges())
             }
         },
-        precompute = function() {}
+        precompute = function() {},
+        plot_obs_pred = function(Q) {},
+        plot_parameters = function(Q) {},
+        plot_all = function(Q = which.max(.self$ICL))
+        {
+            dev.new()
+            memberships[[Q]]$plot()
+            dev.new()
+            .self$plot_obs_pred(Q)
+            dev.new()
+            .self$plot_parameters(Q)
+        },
+        show = function()
+        {
+            cat("lsbm object\n")
+            cat(paste("    model:",model_name,"\n"))
+            cat(paste("    membership:",membership_name,"\n"))
+            cat(paste("    network:",.self$show_network(),"\n"))
+            if(length(ICL)>0)
+            {
+                cat(paste("    maximum of ICL:",memberships[[which.max(ICL)]]$show_short(),"\n"))
+                cat("    Most usefull fields and methods:\n")
+                cat("        The following fields are indexed by the number of groups:\n")
+                cat("            $ICL : vector of ICL\n")
+                cat("            $PL : vector of pseudo log liklihood\n")
+                cat("            $memberships : list of memberships founds by estimation\n")
+                cat("            $model_results : models parameters founds by estimation\n")
+                cat("        Estimation methods:\n")
+                cat("            $estimate(reinitalization_effort=1) : to run again estimation with a\n")
+                cat("                                                  higher reinitalization effort\n")
+                cat("        Plotting methods:\n")
+                cat("            $plot_obs_pred(Q) : to plot the obeserved and predicted network for Q groups\n")
+                cat("            $plot_parameters(Q) : to plot the model_parameters for Q groups\n")
+                cat("            $plot_all(Q=which.max(ICL)) : to plot memberships, and two previous plots\n")
+            }
+            else
+            {
+                cat("    Estimation not done.\n")
+                cat("    Run $estimate(). You can specify a reinitialization effort, by default 1.\n")
+            }
+
+        }
     )
 )
 
