@@ -168,7 +168,41 @@ scalar_model <- setRefClass("scalar_model",
 
                 return(result)
             }
+        },
+        plot_obs_pred = function(Q)
+        {
+            pred <- predictions[[Q]]$adjacency
+
+            par(mfrow=c(2,1))
+            if(membership_name == "LBM")
+            {
+                order1 <- order(memberships[[Q]]$map()$C1)
+                order2 <- order(memberships[[Q]]$map()$C2)
+            }
+            else
+            {
+                order1 <- order(memberships[[Q]]$map()$C)
+                order2 <- order1
+            }
+
+            rn<-rownames(adj)
+            cn<-colnames(adj)
+
+            if(is.null(rn))
+            {
+                rn<-1:nrow(adj)
+            }
+            if(is.null(cn))
+            {
+                cn<-1:ncol(adj)
+            }
+
+            matrixplot(adj[order1,order2],rowlabels=rn[order1],collabels=cn[order2])
+            
+            matrixplot(pred[order1,order2],rowlabels=rn[order1],collabels=cn[order2])
         }
+
+            
     )
 )
 

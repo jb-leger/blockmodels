@@ -131,7 +131,27 @@ LBM <- setRefClass("LBM",
             }
 
             return(result)
-        }
+        },
+        plot = function()
+        {
+            par(mfrow=c(1,2))
+
+            rn1<-rownames(Z1)
+            if(is.null(rn1))
+            {
+                rn1<-1:nrow(Z1)
+            }
+            ordering1 <- order(.self$map()$C1)
+            matrixplot(as.matrix(Z1[ordering1,]),rowlabels=rn1[ordering1])
+
+            rn2<-rownames(Z2)
+            if(is.null(rn2))
+            {
+                rn2<-1:nrow(Z2)
+            }
+            ordering2 <- order(.self$map()$C2)
+            matrixplot(as.matrix(Z2[ordering2,]),rowlabels=rn2[ordering2])
+        }   
 
     )
 )

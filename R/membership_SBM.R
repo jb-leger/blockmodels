@@ -102,7 +102,18 @@ SBM <- setRefClass("SBM",
                 }
             }
             return(result)
+        },
+        plot = function()
+        {
+            rn<-rownames(Z)
+            if(is.null(rn))
+            {
+                rn<-1:nrow(Z)
+            }
+            ordering <- order(.self$map()$C)
+            matrixplot(as.matrix(Z[ordering,]),rowlabels=rn[ordering])
         }
+
 
     )
 )
