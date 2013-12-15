@@ -3,34 +3,55 @@ setRefClass("model",
     fields = list(
         model_name = "character",       # e.g. "bernoulli"
         membership_name = "character",  # e.g. "SBM"
-        already_tried = "list",         # initialization already tried
-        already_quality_computed = "list", # initialization with quality already
-                                           # computed
-        already_splitted = "list",
-        already_merged = "list",
+
+        # digests are used here
+        digest_already_tried = "list",     # initialization already tried
+        digest_already_quality_computed = "list", 
+                                           # initialization with quality already
+                                           # computed each value is a list with
+                                           # two members, first the digest,
+                                           # second, the value
+        digest_already_splitted = "list",
+        digest_already_merged = "list",
+
         memberships = "list",           # found memberships
         model_results = "list",         # found model parameters
         PL = "numeric",                 # Pseudo liklihood of found models
         H = "numeric",                  # Entropy of found models
         ICL = "numeric",                # ICL of found models
-        predictions = "list",           # Prediction of found models
         precomputed = "list",
         last_reinitialization_effort = "numeric",
         allICLs= "matrix",
-        textlevel = "numeric",
+        verbosity = "numeric",
         plotlevel = "numeric"
     ),
     methods = list(
         init_levels = function()
         {
-            if(length(textlevel)==0)
+            if(length(verbosity)==0)
             {
-                textlevel<<-1
+                verbosity<<-4
             }
 
             if(length(plotlevel)==0)
             {
                 plotlevel<<-1
+            }
+        },
+        say = function(level,...)
+        {
+            if(level<=verbosity)
+            {
+                if(level>1)
+                {
+                    for(i in 2:level)
+                    {
+                        cat("    ")
+                    }
+                }
+                cat("-> ")
+                cat(paste(...))
+                cat("\n")
             }
         },
         estimate = function(reinitialization_effort=1)
@@ -43,8 +64,8 @@ setRefClass("model",
             }
             if(!any(last_reinitialization_effort==reinitialization_effort))
             {
-                already_splitted <<- list()
-                already_merged <<- list()
+                digest_already_splitted <<- list()
+                digest_already_merged <<- list()
                 last_reinitialization_effort<<-reinitialization_effort
                 changing_effort <- TRUE
             }
@@ -57,34 +78,20 @@ setRefClass("model",
             {
                 if(membership_name=="LBM")
                 {
-                    if(textlevel>=1)
-                    {
-                        cat("for 2 group, ")
-                    }
+                    say(1,"Estimation for 2 groups (1+1)")
                     do_with_inits(
                         list(getRefClass(membership_name)(
                             network_size=.self$number_of_nodes())),
                         2,reinitialization_effort)
-                    if(textlevel>=1)
-                    {
-                        cat("\n")
-                    }
                 }
                 else
                 {
-                    if(textlevel>=1)
-                    {
-                        cat("for 1 group, ")
-                    }
+                    say(1,"Estimation for 1 groups")
                     do_with_inits(
                         list(getRefClass(membership_name)(
                             network_size=.self$number_of_nodes())),
                         1,reinitialization_effort)
 
-                    if(textlevel>=1)
-                    {
-                        cat("\n")
-                    }
                 }
             }
 
@@ -94,16 +101,21 @@ setRefClass("model",
             n<-1
             while(l)
             {
-            
-                ra<-.self$estim_ascend(paste('pass',n),reinitialization_effort,changing_effort)
-                rb<-.self$estim_descend(paste('pass',n),reinitialization_effort)
+                say(1,"Pass",n)
+
+                say(2,"With ascending number of groups")
+                ra<-.self$estim_ascend(reinitialization_effort,changing_effort)
+
+                say(2,"With descending number of groups")
+                rb<-.self$estim_descend(reinitialization_effort)
+
                 l<-ra||rb
                 n<-n+1
                 changing_effort<-FALSE
             }
         },
 
-        estim_ascend = function(message,reinitialization_effort,changing_effort)
+        estim_ascend = function(reinitialization_effort,changing_effort)
         {
             if(membership_name=="LBM")
             {
@@ -119,18 +131,18 @@ setRefClass("model",
             {
                 Q<-Q+1
 
-                if(textlevel>=1)
-                {
-                    cat(paste(message,'asc, for',Q,'groups, '))
-                }
+                say(3,"For",Q,"groups")
+
                 if(Q>length(ICL) || changing_effort)
                 {
+                    say(4,"Init from spectral clustering")
                     inits <- .self$provide_init(Q)
                 }
                 else
                 {
                     inits <- list()
                 }
+                say(4,"Init from splitting groups from",Q-1,"groups")
                 inits <- c(inits,.self$split_membership(Q-1))
                 if(length(inits)>0)
                 {
@@ -139,24 +151,17 @@ setRefClass("model",
                 }
                 else
                 {
-                    if(textlevel>=1)
-                    {
-                        cat("already done")
-                    }
+                    say(4,"already done")
                     if(Q>length(ICL))
                     {
                         break
                     }
                 }
-                if(textlevel>=1)
-                {
-                    cat("\n")
-                }
             }
             return(ret)
         },
 
-        estim_descend = function(message,reinitialization_effort)
+        estim_descend = function(reinitialization_effort)
         {
             ret<-FALSE
             if(membership_name=="LBM")
@@ -169,10 +174,8 @@ setRefClass("model",
             }
             for(Q in seq(length(ICL)-1,Qmin+1))
             {
-                if(textlevel>=1)
-                {
-                    cat(paste(message,'desc, for',Q,'groups, '))
-                }
+                say(3,"For",Q,"groups")
+                say(4,"Init from merging groups from",Q+1,"groups")
                 inits <- merge_membership(memberships[[Q+1]])
 
                 if(length(inits)>0)
@@ -182,14 +185,7 @@ setRefClass("model",
                 }
                 else
                 {
-                    if(textlevel>=1)
-                    {
-                        cat("already done")
-                    }
-                }
-                if(textlevel>=1)
-                {
-                    cat("\n")
+                    say(4,"Already done")
                 }
 
             }
@@ -198,50 +194,39 @@ setRefClass("model",
 
         do_with_inits = function(inits,Q,reinitialization_effort)
         {
-            if(textlevel>=1)
-            {
-                cat(paste("with",
-                      length(inits),"initalizations, "))
-            }
+            say(4,length(inits),"initializations provided")
 
-            filter <- c(
-                        mclapply(
-                            inits,
-                            function(x){!x$into(.self$already_tried)},
-                            mc.cores=detectCores(),
-                            mc.preschedule=TRUE
-                        ),
-                        recursive=TRUE
-                     )
+            filter<-sapply(
+                inits,
+                function(init)
+                {
+                    d<-init$digest()
+                    !any(
+                        sapply(
+                            digest_already_tried,
+                            function(x)
+                            {
+                                x==d
+                            }
+                        )
+                    )
+                }
+            )
 
             nb_init_max <- floor(1+4*reinitialization_effort*sqrt(Q))
 
-            if(textlevel>=1)
-            {
-                cat(paste(sum(filter),"not already used, "))
-            }
+            say(4,sum(filter),"initializations not already used")
             
             if(length(inits)>nb_init_max)
             {
-                quality <- c(
-                        mclapply(
-                            inits,
-                            .self$membership_init_quality,
-                            mc.cores=detectCores(),
-                            mc.preschedule=FALSE
-                        ),
-                        recursive=TRUE
-                     )
+                quality<-.self$membership_init_quality(inits)
                 seuil <- (-sort(-quality))[nb_init_max]
                 filter <- filter & (quality >= seuil)
             }
 
             inits <- inits[filter]
 
-            if(textlevel>=1)
-            {
-                cat(paste(length(inits),"are tried"))
-            }
+            say(4,"Estimation with",length(inits),"initializations")
 
             ret<-FALSE
 
@@ -277,23 +262,28 @@ setRefClass("model",
                     good <- TRUE
                 }
 
-                already_tried <<- c(already_tried, inits)
+                digest_already_tried <<- c(digest_already_tried,
+                                    lapply(inits,function(x){x$digest()}))
 
 
                 if(good)
                 {
-                    if(textlevel>=2)
-                    {
-                        cat(paste("usefull, max ICL found",max(ICLs),"previous",ICL[Q]))
-                    }
+                    say(5,"Better ICL criterion found")
+                    say(5,"new ICL:",max(ICLs))
+                    say(5,"old ICL:",ICL[Q])
 
                     kmax<-which.max(ICLs)
 
                     r<-results[[kmax]]
                     memberships[[Q]] <<-
                         getRefClass(membership_name)(from_cc=r$membership)
+
+                    if(membership_name=="LBM")
+                    {
+                        say(5,memberships[[Q]]$show_short())
+                    }
+
                     model_results[[Q]] <<- r$model
-                    predictions[[Q]] <<- r$prediction
                     PL[Q] <<- r$PL
                     H[Q] <<- r$H
                     ICL[Q] <<- r$PL - .5*(r$model$n_parameters *
@@ -316,43 +306,65 @@ setRefClass("model",
                 }
                 else
                 {
-                    if(textlevel>=2)
-                    {
-                        cat(paste("useless, max ICL found",max(ICLs),"previous",ICL[Q]))
-                    }
+                    say(5,"Useless, no better ICL criterion found")
+                    say(5,"better ICL found:",max(ICLs))
+                    say(5,"old ICL:",ICL[Q])
                 }
             }
 
             return(ret)
         },
 
-        membership_init_quality = function(membership_init)
+        membership_init_quality = function(inits)
         {
-            v<-membership_init$into_v(already_quality_computed)
+            quals <- sapply(
+                inits,
+                function(init)
+                {
+                    qual <- digest_already_quality_computed[[init$digest()]]
+                    if(is.null(qual))
+                    {
+                        return(NA)
+                    }
+                    else
+                    {
+                        return(qual)
+                    }
+                }
+            )
             
-            if(v)
+            if(any(is.na(quals)))
             {
-                return(v)
-            }
-            else
-            {
-                r <- dispatcher(membership_name,
-                                membership_init$to_cc(),
-                                model_name,
-                                .self$network_to_cc(),
-                                FALSE)
+                inits<-inits[is.na(quals)]
 
-                local_ICL <- r$PL - .5*(r$model$n_parameters *
-                                    log(.self$data_number())
-                            +
-                            getRefClass(membership_name)(
-                                    from_cc=r$membership)$ICL_penalty())
+                naquals<- sapply(
+                    inits,
+                    function(membership_init)
+                    {
+                        
 
-                already_quality_computed<<-c(already_quality_computed,list(
-                                        list(membership=membership_init,ICL=local_ICL)
-                                        ))
-                return(local_ICL)
+                        r <- dispatcher(membership_name,
+                                        membership_init$to_cc(),
+                                        model_name,
+                                        .self$network_to_cc(),
+                                        FALSE)
+
+                        local_ICL <- r$PL - .5*(r$model$n_parameters *
+                                            log(.self$data_number())
+                                    +
+                                    getRefClass(membership_name)(
+                                            from_cc=r$membership)$ICL_penalty())
+                    }
+                )
+
+                for(i in 1:length(inits))
+                {
+                    digest_already_quality_computed[[inits[[i]]$digest()]] <<- naquals[i]
+                }
+
+                quals[is.na(quals)] <- naquals
             }
+            return(quals)
         },
 
         do_one_estim = function(membership_init)
@@ -367,26 +379,30 @@ setRefClass("model",
         },
         split_membership = function(Q)
         {
-            if(memberships[[Q]]$into(already_splitted))
+            d<-memberships[[Q]]$digest()
+            if(any(sapply(digest_already_splitted,function(x){x==d})))
             {
                 return(list())
             }
             else
             {
-                already_splitted <<- c(already_splitted, list(memberships[[Q]]))
-                return(.self$split_membership_model(Q))
+                splitted_membership<-.self$split_membership_model(Q)
+                digest_already_splitted <<- c(digest_already_splitted,list(d))
+                return(splitted_membership)
             }
         },
         merge_membership = function(membership)
         {
-            if(membership$into(already_merged))
+            d<-membership$digest()
+            if(any(sapply(digest_already_merged,function(x){x==d})))
             {
                 return(list())
             }
             else
             {
-                already_merged <<- c(already_merged, list(membership))
-                return(membership$merges())
+                merged_membership<-membership$merges()
+                digest_already_merged <<- c(digest_already_merged,list(d))
+                return(merged_membership)
             }
         },
         precompute = function() {},

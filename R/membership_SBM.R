@@ -31,6 +31,10 @@ setRefClass("SBM",
                 }
             }
         },
+        digest = function()
+        {
+            digest::digest(order_round_matrix(Z),algo='sha256')
+        },
         show_short = function()
         {
             paste(ncol(Z),"groups")
@@ -43,49 +47,6 @@ setRefClass("SBM",
             cat("    Usefull fields and methods:\n")
             cat("        $Z : matrix of nodes memberships\n")
             cat("        $plot() : plot the memberships\n")
-        },
-        into = function(memberships_list)
-        {
-            any(
-                    sapply(
-                        memberships_list,
-                        function(x){
-                            if(all(dim(x$Z)==dim(Z)))
-                            {
-                                return(all(x$Z == Z))
-                            }
-                            else
-                            {
-                                return(FALSE)
-                            }
-                        }
-                    )
-            )
-        },
-        into_v = function(membership_value_pairs_list)
-        {
-            bvec <- sapply(
-                        membership_value_pairs_list,
-                        function(x){
-                            if(all(dim(x$membership$Z)==dim(Z)))
-                            {
-                                return(all(x$membership$Z == Z))
-                            }
-                            else
-                            {
-                                return(FALSE)
-                            }
-                        }
-
-                    )
-            if(any(bvec))
-            {
-                return(membership_value_pairs_list[[which(bvec)]]$ICL)
-            }
-            else
-            {
-                return(FALSE)
-            }
         },
         to_cc = function()
         {

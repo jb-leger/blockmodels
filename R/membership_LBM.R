@@ -47,6 +47,14 @@ setRefClass("LBM",
                 }
             }
         },
+        digest = function()
+        {
+            digest::digest(
+                list(
+                    order_round_matrix(Z1),
+                    order_round_matrix(Z2)
+                ),algo='sha256')
+        },
         show_short = function()
         {
             paste(ncol(Z1),"row groups,",ncol(Z2),"col groups")
@@ -60,49 +68,6 @@ setRefClass("LBM",
             cat("        $Z1 : matrix of row nodes memberships\n")
             cat("        $Z2 : matrix of col nodes memberships\n")
             cat("        $plot() : plot the memberships\n")
-        },
-        into = function(memberships_list)
-        {
-            any(
-                    sapply(
-                        memberships_list,
-                        function(x){
-                            if(all(dim(x$Z1)==dim(Z1))&&all(dim(x$Z2)==dim(Z2)))
-                            {
-                                return(all(x$Z1 == Z1)&&all(x$Z2 == Z2))
-                            }
-                            else
-                            {
-                                return(FALSE)
-                            }
-                        }
-                    )
-            )
-        },
-        into_v = function(membership_value_pairs_list)
-        {
-            bvec <- sapply(
-                        membership_value_pairs_list,
-                        function(x){
-                            if(all(dim(x$membership$Z1)==dim(Z1))&&all(dim(x$membership$Z2)==dim(Z2)))
-                            {
-                                return(all(x$membership$Z1 == Z1)&&all(x$membership$Z2 == Z2))
-                            }
-                            else
-                            {
-                                return(FALSE)
-                            }
-                        }
-
-                    )
-            if(any(bvec))
-            {
-                return(membership_value_pairs_list[[which(bvec)]]$ICL)
-            }
-            else
-            {
-                return(FALSE)
-            }
         },
         to_cc = function()
         {

@@ -14,8 +14,7 @@ setRefClass("scalar_model",
         split_membership_model = function(Q)
         {
             membership <- memberships[[Q]]
-            prediction <- predictions[[Q]]$adjacency
-            error <- adj - prediction
+            error <- .self$residual(Q)
 
             if(membership_name == "SBM")
             {
@@ -93,13 +92,11 @@ setRefClass("scalar_model",
                 }
                 else
                 {
-                    if(length(predictions)!=0)
+                    if(length(ICL)!=0)
                     {
-                        if(textlevel>=1)
-                        {
-                            cat("comuptation of eigen decomposition used for initalizations")
-                        }
-                        error <- adj - predictions[[1]]$adjacency
+                        say(1,"Computation of eigen decomposition used for initalizations")
+                        
+                        error <- .self$residual(1)
                         W<- error %*% t(error)
                         W<-1/(1+exp(-W/sd(W)))
                         D<- diag(1/sqrt(rowSums(W)))
@@ -119,13 +116,12 @@ setRefClass("scalar_model",
                 }
                 else
                 {
-                    if(length(predictions)!=0)
+                    if(length(ICL)!=0)
                     {
-                        if(textlevel>=1)
-                        {
-                            cat("comuptation of eigen decomposition used for initalizations")
-                        }
-                        error <- adj - predictions[[2]]$adjacency
+                        say(1,"Computation of eigen decomposition used for initalizations")
+                        error <- .self$residual(2)
+                        
+                        say(2,"for rows")
                         
                         W1<- error %*% t(error)
                         W1<-1/(1+exp(-W1/sd(W1)))
@@ -133,6 +129,8 @@ setRefClass("scalar_model",
                         L1<- D1 %*% W1 %*% D1
 
                         precomputed$eigen1 <<- eigen(L1, symmetric=TRUE)
+                        
+                        say(2,"for cols")
                         
                         W2<- t(error) %*% error
                         W2<-1/(1+exp(-W2/sd(W2)))
@@ -181,7 +179,7 @@ setRefClass("scalar_model",
         },
         plot_obs_pred = function(Q)
         {
-            pred <- predictions[[Q]]$adjacency
+            pred <- .self$prediction(Q)
 
             par(mfrow=c(2,1))
             if(membership_name == "LBM")
@@ -210,6 +208,10 @@ setRefClass("scalar_model",
             matrixplot(adj[order1,order2],rowlabels=rn[order1],collabels=cn[order2])
             
             matrixplot(pred[order1,order2],rowlabels=rn[order1],collabels=cn[order2])
+        },
+        residual = function(Q)
+        {
+            adj-.self$prediction(Q)
         }
 
             

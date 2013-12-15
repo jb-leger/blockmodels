@@ -34,4 +34,7 @@ matrixplot <- function(x,colorbar=FALSE,xlab="",ylab="",title=NULL,rowlabels=NUL
     axis(LEFT<-2, at=1:nrow(x),labels=rowlabels[inds])
 }   
 
-
+order_round_matrix <- function(x)
+{
+    floor(10*as.matrix(x[,order(colSums(x),decreasing=T)]))
+}
