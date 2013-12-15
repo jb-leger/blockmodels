@@ -23,7 +23,12 @@ lsbmkmeans <- function(coordinates,k)
 
     centroids <- coordinates[choosen,]
 
-    kmeans(coordinates,centroids,iter.max=n)$cluster;
+    #kmeans(coordinates,centroids,iter.max=n)$cluster;
+    classif <- .Call("kmeans",
+                     coordinates,
+                     centroids,
+                     PACKAGE="lsbm")
+    return(as.vector(1+classif))
 
 }
 
