@@ -215,7 +215,7 @@ setRefClass("model",
 
             nb_init_max <- floor(1+4*reinitialization_effort*sqrt(Q))
 
-            say(4,sum(filter),"initializations not already used")
+            say(5,length(inits)-sum(filter),"initializations already used")
             
             if(length(inits)>nb_init_max)
             {
