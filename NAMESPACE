@@ -1,4 +1,4 @@
-useDynLib(lsbm)
+useDynLib(blockmodels)
 
 export(bernoulli)
 export(poisson)

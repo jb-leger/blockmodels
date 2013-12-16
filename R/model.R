@@ -419,7 +419,7 @@ setRefClass("model",
         },
         show = function()
         {
-            cat("lsbm object\n")
+            cat("blockmodels object\n")
             cat(paste("    model:",model_name,"\n"))
             cat(paste("    membership:",membership_name,"\n"))
             cat(paste("    network:",.self$show_network(),"\n"))

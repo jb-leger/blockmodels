@@ -152,7 +152,7 @@ setRefClass("scalar_model",
                 return(
                     list(
                         getRefClass(membership_name)(
-                            classif=lsbmkmeans(
+                            classif=blockmodelskmeans(
                                 as.matrix(precomputed$eigen$vectors[,1:Q]),
                                 Q
                             )
@@ -168,8 +168,8 @@ setRefClass("scalar_model",
                     Q2<-Q-Q1
                     result[[Q1]] <- getRefClass(membership_name)(
                         classif=list(
-                            lsbmkmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
-                            lsbmkmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)
+                            blockmodelskmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
+                            blockmodelskmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)
                         )
                     )
                 }

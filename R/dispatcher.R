@@ -6,6 +6,6 @@ dispatcher <- function(membership_name,membership_init,model_name,network,real_E
            model_name,
            network,
            real_EM,
-          PACKAGE = "lsbm" )
+          PACKAGE = "blockmodels" )
 }
 

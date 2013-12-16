@@ -1,5 +1,5 @@
 
-lsbmkmeans <- function(coordinates,k)
+blockmodelskmeans <- function(coordinates,k)
 {
 
     n <- dim(coordinates)[1]
@@ -27,7 +27,7 @@ lsbmkmeans <- function(coordinates,k)
     classif <- .Call("kmeans",
                      coordinates,
                      centroids,
-                     PACKAGE="lsbm")
+                     PACKAGE="blockmodels")
     return(as.vector(1+classif))
 
 }
