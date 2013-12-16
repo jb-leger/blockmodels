@@ -258,6 +258,96 @@ class MODEL
 
 
 
+/* If one of the following specialization
+ *     - m_step(LBM &, MODEL &, MODEL::network)
+ *     - m_step(SBM &, MODEL &, MODEL::network)
+ *   is not defined
+ * Then
+ *     Usefull, Mandatory
+ * Else
+ *     Useless
+ *
+ * Export the model parameters as a vector.
+ *
+ * See naive_bernoulli for example.
+ */
+
+// inline
+// vec MODEL::to_vector()
+// {
+// }
+
+
+
+
+
+/* If m_step(SBM &, MODEL &, MODEL::network) is not defined
+ * Then
+ *     Usefull, Mandatory
+ * Else
+ *     Useless
+ * 
+ * Constructor of the model, from a vector of parameter named vectorized with
+ * the given membership of type SBM.
+ *
+ * See naive_bernoulli for example.
+ */
+
+// MODEL::MODEL(SBM & membership, const vec & vectorized)
+// {
+// }
+
+
+
+
+
+/* If m_step(LBM &, MODEL &, MODEL::network) is not defined
+ * Then
+ *     Usefull, Mandatory
+ * Else
+ *     Useless
+ * 
+ * Constructor of the model, from a vector of parameter named vectorized with
+ * the given membership of type LBM.
+ *
+ * See naive_bernoulli for example.
+ */
+
+// MODEL::MODEL(LBM & membership, const vec & vectorized)
+// {
+// }
+
+
+
+
+
+/* If one of the following specialization
+ *     - m_step(LBM &, MODEL &, MODEL::network)
+ *     - m_step(SBM &, MODEL &, MODEL::network)
+ *   is not defined
+ * Then
+ *     Usefull, Mandatory
+ * Else
+ *     Useless
+ *
+ * From the given model, in the given direction for model parameters, return the
+ * maximum betwenn 1 and the maximum step the descend algorithm can do.
+ *
+ * See naive_bernoulli for example.
+ *
+ * If you don't have any constraint on you parameter vector, return 1, else, use
+ * your brain.
+ */
+
+// inline
+// double maximum_step_in_direction(MODEL & model, vec & direction)
+// {
+// }
+
+
+
+
+
 /* If you have defined m_step(SBM &, MODEL &, MODEL::network &)
  * Then
  *     Useless
@@ -297,7 +387,7 @@ class MODEL
 // template<>
 // inline
 // vec grad(MODEL & model,
-//          SBM & membership,
+//          LBM & membership,
 //          MODEL::network & net)
 // {
 // }
@@ -386,95 +476,5 @@ class MODEL
 //             unsigned int j,
 //             unsigned int q,
 //             unsigned int l)
-// {
-// }
-
-
-
-
-
-/* If one of the following specialization
- *     - m_step(LBM &, MODEL &, MODEL::network)
- *     - m_step(SBM &, MODEL &, MODEL::network)
- *   is not defined
- * Then
- *     Usefull, Mandatory
- * Else
- *     Useless
- *
- * From the given model, in the given direction for model parameters, return the
- * maximum betwenn 1 and the maximum step the descend algorithm can do.
- *
- * See naive_bernoulli for example.
- *
- * If you don't have any constraint on you parameter vector, return 1, else, use
- * your brain.
- */
-
-// inline
-// double maximum_step_in_direction(MODEL & model, vec direction)
-// {
-// }
-
-
-
-
-
-/* If one of the following specialization
- *     - m_step(LBM &, MODEL &, MODEL::network)
- *     - m_step(SBM &, MODEL &, MODEL::network)
- *   is not defined
- * Then
- *     Usefull, Mandatory
- * Else
- *     Useless
- *
- * Export the model parameters as a vector.
- *
- * See naive_bernoulli for example.
- */
-
-// inline
-// vec MODEL::to_vector()
-// {
-// }
-
-
-
-
-
-/* If m_step(SBM &, MODEL &, MODEL::network) is not defined
- * Then
- *     Usefull, Mandatory
- * Else
- *     Useless
- * 
- * Constructor of the model, from a vector of parameter named vectorized with
- * the given membership of type SBM.
- *
- * See naive_bernoulli for example.
- */
-
-// MODEL::MODEL(SBM & membership, const vec & vectorized)
-// {
-// }
-
-
-
-
-
-/* If m_step(LBM &, MODEL &, MODEL::network) is not defined
- * Then
- *     Usefull, Mandatory
- * Else
- *     Useless
- * 
- * Constructor of the model, from a vector of parameter named vectorized with
- * the given membership of type LBM.
- *
- * See naive_bernoulli for example.
- */
-
-// MODEL::MODEL(LBM & membership, const vec & vectorized)
 // {
 // }
