@@ -1,5 +1,5 @@
 
-poisson <- setRefClass("poisson",
+BMpoisson <- setRefClass("BMpoisson",
     contains = "scalar_model",
     methods = list(
         initialize = function(membership_type,adj,...)

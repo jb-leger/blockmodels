@@ -1,5 +1,5 @@
 
-bernoulli <- setRefClass("bernoulli",
+BMbernoulli <- setRefClass("BMbernoulli",
     contains = "scalar_model",
     methods = list(
         initialize = function(membership_type,adj,...)
