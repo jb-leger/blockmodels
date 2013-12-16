@@ -4,7 +4,7 @@
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership}
-\usage{BMbernoulli(membership_type, adj, verbosity = 4, plotlevel = 1)}
+\usage{BMpoisson(membership_type, adj, verbosity = 4, plotlevel = 1)}
 \arguments{
     \item{membership_type}{The type of node membership, e.g. "SBM", "LBM"}
     \item{adj}{The wieghted adjacency matrix}
