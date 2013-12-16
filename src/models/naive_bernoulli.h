@@ -39,43 +39,6 @@ class naive_bernoulli
     }
 
     inline
-    Rcpp::List prediction(SBM & membership)
-    {
-        mat pred(membership.Z.n_rows, membership.Z.n_rows);
-        pred.fill(0);
-
-        for(unsigned int i=0;i<pred.n_rows;i++)
-            for(unsigned int j=0;i<pred.n_cols;j++)
-                for(unsigned int q=0;q<membership.Z.n_cols;q++)
-                    for(unsigned int l=0;l<membership.Z.n_cols;l++)
-                        pred(i,j) +=   membership.Z(i,q)
-                                     * membership.Z(j,l)
-                                     * pi(q,l);
-        Rcpp::List Lpred;
-        Lpred["adjacency"] = pred;
-
-        return Lpred;
-    }
-    
-    inline
-    Rcpp::List prediction(LBM & membership)
-    {
-        mat pred(membership.Z1.n_rows, membership.Z2.n_rows);
-        pred.fill(0);
-
-        for(unsigned int i=0;i<pred.n_rows;i++)
-            for(unsigned int j=0;i<pred.n_cols;j++)
-                for(unsigned int q=0;q<membership.Z1.n_cols;q++)
-                    for(unsigned int l=0;l<membership.Z2.n_cols;l++)
-                        pred(i,j) +=   membership.Z1(i,q)
-                                     * membership.Z2(j,l)
-                                     * pi(q,l);
-        Rcpp::List Lpred;
-        Lpred["adjacency"] = pred;
-        return Lpred;
-    }
-
-    inline
     Rcpp::List export_to_R()
     {
         Rcpp::List values;

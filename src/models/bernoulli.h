@@ -71,23 +71,6 @@ class bernoulli
 
         return values;
     }
-
-    inline
-    Rcpp::List prediction(SBM & membership)
-    {
-        Rcpp::List Lpred;
-        mat pred = membership.Z * pi * membership.Z.t();
-        Lpred["adjacency"] = pred;
-        return Lpred;
-    }
-    
-    inline
-    Rcpp::List prediction(LBM & membership)
-    {
-        Rcpp::List Lpred;
-        Lpred["adjacency"] = membership.Z1 * pi * membership.Z2.t();
-        return Lpred;
-    }
 };
 
 template<>

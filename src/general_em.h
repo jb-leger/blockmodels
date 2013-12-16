@@ -22,7 +22,6 @@ struct result
         values["model"] = model.export_to_R();
         values["PL"] = PL;
         values["H"] = H;
-        values["prediction"] = model.prediction(membership);
 
         return values;
     }

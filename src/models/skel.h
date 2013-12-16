@@ -85,41 +85,6 @@ class MODEL
         return values;
     }
 
-    inline
-    Rcpp::List prediction(SBM & membership, MODEL::network & net)
-    {
-        Rcpp::List Lpred;
-
-        /* Here you should provide a method to compute the prediction of the
-         * network knowing parameters and the membership in the case of SBM. The
-         * network object is provided, but only covariate fields shoud be used
-         */
-
-        /* The result is a list for R, as the same organization than the
-         * provided network by R. See the constructor of MODEL::network you have
-         * previously defined.
-         */
-        return Lpred;
-    }
-    
-    inline
-    Rcpp::List prediction(LBM & membership)
-    {
-        Rcpp::List Lpred;
-        
-        /* Here you should provide a method to compute the prediction of the
-         * network knowing parameters and the membership in the case of SBM. The
-         * network object is provided, but only covariate fields shoud be used
-         */
-
-        /* The result is a list for R, as the same organization than the
-         * provided network by R. See the constructor of MODEL::network you have
-         * previously defined.
-         */
-        
-        return Lpred;
-    }
-
     /* Keep this. When this is not usefull, this is not used. */
     inline vec to_vector();
     MODEL(SBM &, const vec &);
