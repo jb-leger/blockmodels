@@ -1,11 +1,11 @@
-\name{BMpoisson_covariates}
-\alias{BMpoisson_covariates}
+\name{BM_poisson_covariates}
+\alias{BM_poisson_covariates}
 \title{Perform estimation on blockmodels for poisson probability distribution
 aith covariates}
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership, and impact vector of covariates}
-\usage{BMpoisson_covariates(membership_type, adj, verbosity = 4, plotlevel = 1)}
+\usage{BM_poisson_covariates(membership_type, adj, verbosity = 4, plotlevel = 1)}
 \arguments{
     \item{membership_type}{The type of node membership, e.g. "SBM", "LBM"}
     \item{adj}{The wieghted adjacency matrix}
@@ -28,7 +28,7 @@ criterion), each time there are computed, are done. 0 means no plot.}
         ,80,80)
 
     ## estimation
-    my_model <- BMpoisson_covariates("SBM",M,list(Y1,Y2),plotlevel=0)
+    my_model <- BM_poisson_covariates("SBM",M,list(Y1,Y2),plotlevel=0)
     my_model$estimate()
     which.max(my_model$ICL)
 }

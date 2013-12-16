@@ -1,5 +1,5 @@
 useDynLib(blockmodels)
 
-export(BMbernoulli)
-export(BMpoisson)
-export(BMpoisson_covariates)
+export(BM_bernoulli)
+export(BM_poisson)
+export(BM_poisson_covariates)

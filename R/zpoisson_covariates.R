@@ -1,5 +1,5 @@
 
-BMpoisson_covariates <- setRefClass("BMpoisson_covariates",
+BM_poisson_covariates <- setRefClass("BM_poisson_covariates",
     contains = "scalar_model_with_covariates",
     methods = list(
         initialize = function(membership_type,adj,covariates,...)
