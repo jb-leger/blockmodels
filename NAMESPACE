@@ -2,3 +2,4 @@ useDynLib(blockmodels)
 
 export(BMbernoulli)
 export(BMpoisson)
+export(BMpoisson_covariates)

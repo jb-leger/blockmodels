@@ -92,7 +92,7 @@ class poisson_covariates
     {
         Rcpp::List values;
         values["n_parameters"] = n_parameters;
-        values["labmda"] = lambda;
+        values["lambda"] = lambda;
         values["beta"] = beta;
 
         return values;
@@ -206,6 +206,7 @@ double PL(poisson_covariates & model,
 
     return(
         accu(
+                -
                 model.lambda
                 %
                 ( membership.Z.t() * eBZD * membership.Z )
@@ -216,7 +217,7 @@ double PL(poisson_covariates & model,
             )
         +
         accu( net.adj%B )
-        + net.accu_log_fact_X
+        - net.accu_log_fact_X
         );
     
 }
@@ -247,6 +248,7 @@ double PL(poisson_covariates & model,
 
     return(
         accu(
+                -
                 model.lambda
                 %
                 ( membership.Z1.t() * exp(B) * membership.Z2 )
@@ -257,7 +259,7 @@ double PL(poisson_covariates & model,
             )
         +
         accu( net.adj%B )
-        + net.accu_log_fact_X
+        - net.accu_log_fact_X
         );
 }
 
@@ -368,9 +370,12 @@ double maximum_step_in_direction(poisson_covariates & model, vec & direction)
     double amax=1;
     for(unsigned int i=0;i<dir_lambda.n_elem;i++)
     {
-        double a=-model.lambda(i)/dir_lambda(i);
-        if(a<amax)
-            amax=a;
+        if(dir_lambda(i)!=0 && dir_lambda(i)*model.lambda(i)<0)
+        {
+            double a=-model.lambda(i)/dir_lambda(i);
+            if(a<amax)
+                amax=a;
+        }
     }
 
     return(amax);

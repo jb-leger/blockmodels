@@ -100,7 +100,7 @@ double m_step(SBM & membership, poisson & model, poisson::network & net)
         (
             accu(
                 
-                    (
+                    -(
                         model.lambda 
                         % 
                         (membership.Z.t() * net.MonesZD * membership.Z)
@@ -112,7 +112,7 @@ double m_step(SBM & membership, poisson & model, poisson::network & net)
                         (membership.Z.t() * net.adjZD * membership.Z)
                     )
                 )
-            + net.accu_log_fact_X
+            - net.accu_log_fact_X
         );
 }
 
@@ -128,7 +128,7 @@ double m_step(LBM & membership, poisson & model, poisson::network & net)
         (
             accu(
                 
-                    (
+                    -(
                         model.lambda 
                         % 
                         (membership.Z1.t() * net.Mones * membership.Z2)
@@ -140,7 +140,7 @@ double m_step(LBM & membership, poisson & model, poisson::network & net)
                         (membership.Z1.t() * net.adj * membership.Z2)
                     )
                 )
-            + net.accu_log_fact_X
+            - net.accu_log_fact_X
         );
 }
 

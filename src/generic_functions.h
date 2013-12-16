@@ -58,6 +58,11 @@ double m_step(membership_type & membership, model_type & model, network_type & n
 
     vec gradient = - grad(model,membership, net);
     double value = - PL(model,membership, net);
+    #ifdef DEBUG_M
+    printf("M numerical optim: %f\n",value);
+    gradient.print("gradient:");
+
+    #endif
 
     double gain=0;
     do
@@ -68,6 +73,10 @@ double m_step(membership_type & membership, model_type & model, network_type & n
         if(D_direction>=0)
             break;
 
+        #ifdef DEBUG_M
+        direction.print("direction:");
+        #endif
+
         double a=1.5 * maximum_step_in_direction(model,direction);
         double new_value=0;
         do
@@ -75,6 +84,9 @@ double m_step(membership_type & membership, model_type & model, network_type & n
             a *= .5;
             model_type model_added = copy_and_add(model,membership,a*direction);
             new_value = - PL(model_added,membership, net);
+            #ifdef DEBUG_M
+            printf("line search: a=%f value=%f\n",a,new_value);
+            #endif
         } while(new_value-value > .25 * a * D_direction);
 
         model = copy_and_add(model,membership,a*direction);
@@ -88,6 +100,10 @@ double m_step(membership_type & membership, model_type & model, network_type & n
         gain = value-new_value;
         gradient = new_gradient;
         value = new_value;
+        #ifdef DEBUG_M
+        printf("M numerical optim: %f\n",value);
+        gradient.print("gradient:");
+        #endif
 
     } while( gain > TOL_M );
 
