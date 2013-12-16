@@ -5,7 +5,7 @@ BMpoisson <- setRefClass("BMpoisson",
         initialize = function(membership_type,adj,...)
         {
             .self$initFields(membership_name = membership_type,
-                            model_name = "bernoulli",
+                            model_name = "poisson",
                             adj = adj,
                             ...)
         },

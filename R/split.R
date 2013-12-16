@@ -7,7 +7,7 @@ coordinates_split <- function(coordinates,mass){
 	C<-.Call( "split",
              list(coordinates=as.matrix(coordinates[o,]),
                   mass=as.matrix(mass[o])),
-             PACKAGE = "lsbm" )
+             PACKAGE = "blockmodels" )
 
     C[io,]
 }

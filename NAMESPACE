@@ -1,4 +1,4 @@
 useDynLib(blockmodels)
 
-export(bernoulli)
-export(poisson)
+export(BMbernoulli)
+export(BMpoisson)

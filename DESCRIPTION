@@ -5,7 +5,9 @@ Version: 0.1
 Date: 2013-12-16
 Author: Jean-Benoist Leger <jleger@agroparistech.fr>
 Maintainer: Jean-Benoist Leger <jleger@agroparistech.fr>
-Description: 
+Description: Latent and Stochastic Block Model estimation by a V-EM algorithm
+             Various probability distrution are provided (bernoulli,
+             poisson...), with or without covariates.
 License: LGPL v2.1
 Depends: Rcpp (>= 0.10.6), RcppArmadillo (>= 0.3.920.1), parallel, methods, digest
 LinkingTo: Rcpp, RcppArmadillo
