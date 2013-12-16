@@ -1,0 +1,36 @@
+
+1. Copy src/models/skel.h to src/models/your_model_name.h
+
+2. replace all occurence of MODEL in src/models/your_model_name.h by
+   your_model_name
+   e.g. sed -r 's/MODEL/your_model_name/g' -i src/models/your_model_name.h
+
+3. Edit the file src/models/your_model_name.h, following instructions in
+   comments
+
+4. Edit src/dispatcher.h you must 
+    - add your model/your_model_name.h in includes
+    - add 3 line (and one blank line) in the dispatcher model, search bernoulli
+      and poisson to understand
+
+5. Edit src/Makevars, add -Wall to PKG_CPPFLAGS
+
+6. Compile your code. As your modification are in .h files, you must touch the
+   file src/dispatcher.h at each recompilation to force recompilation.
+
+   cd ..
+   touch blockmodels/src/dispatcher.cc
+   R CMD INSTALL blockmodels
+
+   If you want to submit your model, the compilation must be done WITHOUT any
+   warnings.
+
+7. Write R RefClass for the model, inheriting from scalar_model,
+   scalar_model_with_covarariates, multivariate_model, ... or model directly if you
+   want.
+
+8. Write R documentation file.
+
+   If you want to submit your model, example must be runnable.
+
+9. Set export of you model in NAMESPACE.
