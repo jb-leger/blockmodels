@@ -32,7 +32,11 @@ criterion), each time there are computed, are done. 0 means no plot.}
     ## SBM symmetric
     ##
     
-    ## generation of one SBM_sym network, we re-use one produced for SBM
+    ## generation of one SBM_sym network
+    Z<-matrix(1,20,1)\%x\%diag(4)
+    P<-matrix(runif(16),4,4)
+    P[lower.tri(P)]<-t(P)[lower.tri(P)]
+    M<-1*(matrix(runif(80*80),80,80)<Z\%*\%P\%*\%t(Z))
     M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
     ## estimation

@@ -42,8 +42,20 @@ criterion), each time there are computed, are done. 0 means no plot.}
     ##
 
     ## generation of one SBM_sym network, we re-use one produced for SBM
+    Z<-matrix(1,20,1)\%x\%diag(4)
+    L<-70*matrix(runif(16),4,4)
+    L[lower.tri(L)]<-t(L)[lower.tri(L)]
+    M_in_expectation_without_covariates<-Z\%*\%L\%*\%t(Z)
+    Y1 <- matrix(runif(80*80),80,80)
+    Y2 <- matrix(runif(80*80),80,80)
     Y1[lower.tri(Y1)]<-t(Y1)[lower.tri(Y1)]
     Y2[lower.tri(Y2)]<-t(Y2)[lower.tri(Y2)]
+    M_in_expectation<-M_in_expectation_without_covariates*exp(4.2*Y1-1.2*Y2)
+    M<-matrix(
+        rpois(
+            length(as.vector(M_in_expectation)),
+            as.vector(M_in_expectation))
+        ,80,80)
     M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
     ## estimation
