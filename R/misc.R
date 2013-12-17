@@ -38,3 +38,19 @@ order_round_matrix <- function(x)
 {
     floor(10*as.matrix(x[,order(colSums(x),decreasing=T)]))
 }
+
+cumtime <- function()
+{
+    sum(
+        sapply(
+            strsplit(
+                system(
+                    'cat /proc/$PPID/stat | cut -d " " -f 14-17',
+                    intern=TRUE
+                ),
+                ' '
+            ),
+            strtoi
+        )
+    )
+}

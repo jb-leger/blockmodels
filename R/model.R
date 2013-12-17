@@ -23,7 +23,12 @@ setRefClass("model",
         last_reinitialization_effort = "numeric",
         allICLs= "matrix",
         verbosity = "numeric",
-        plotlevel = "numeric"
+        plotlevel = "numeric",
+
+        # profiling
+        profiling = "numeric",
+        profiling_active = "logical",
+        profiling_t = "numeric"
     ),
     methods = list(
         init_levels = function()
@@ -36,6 +41,31 @@ setRefClass("model",
             if(length(plotlevel)==0)
             {
                 plotlevel<<-1
+            }
+
+            if(length(profiling_active)==0)
+            {
+                profiling_active<<-FALSE
+            }
+        },
+        tic = function()
+        {
+            if(profiling_active)
+            {
+                profiling_t<<-cumtime()
+            }
+        },
+        toc = function(field)
+        {
+            if(profiling_active)
+            {
+                t2 <- cumtime()
+                if(is.na(profiling[field]))
+                {
+                    profiling[field] <<- 0
+                }
+                profiling[field] <<- profiling[field] + t2 - profiling_t
+                profiling_t <<-t2
             }
         },
         say = function(level,...)
@@ -136,14 +166,27 @@ setRefClass("model",
                 if(Q>length(ICL) || changing_effort)
                 {
                     say(4,"Init from spectral clustering")
+
+                    tic()
+                     
                     inits <- .self$provide_init(Q)
+
+                    toc('init_SC')
+                    
                 }
                 else
                 {
                     inits <- list()
                 }
+
                 say(4,"Init from splitting groups from",Q-1,"groups")
+               
+                tic() 
+                
                 inits <- c(inits,.self$split_membership(Q-1))
+
+                toc('init_split')
+
                 if(length(inits)>0)
                 {
                     r<-.self$do_with_inits(inits,Q,reinitialization_effort)
@@ -176,7 +219,12 @@ setRefClass("model",
             {
                 say(3,"For",Q,"groups")
                 say(4,"Init from merging groups from",Q+1,"groups")
+
+                tic()
+
                 inits <- merge_membership(memberships[[Q+1]])
+
+                toc('init_merges')                
 
                 if(length(inits)>0)
                 {
@@ -196,6 +244,8 @@ setRefClass("model",
         {
             say(4,length(inits),"initializations provided")
 
+            tic()
+            
             filter<-sapply(
                 inits,
                 function(init)
@@ -212,6 +262,8 @@ setRefClass("model",
                     )
                 }
             )
+
+            toc('estimation_already_tried')            
 
             nb_init_max <- floor(1+4*reinitialization_effort*sqrt(Q))
 
@@ -230,14 +282,19 @@ setRefClass("model",
 
             ret<-FALSE
 
+            
             if(length(inits)>0)
             {
+
+                tic()
 
                 results<-mclapply(
                     inits,
                     .self$do_one_estim,
                     mc.cores=detectCores(),
                     mc.preschedule=FALSE)
+            
+                toc('estimation_run')
 
                 good <- FALSE
 
@@ -261,16 +318,21 @@ setRefClass("model",
                 {
                     good <- TRUE
                 }
+               
+                toc('estimation_computation_ICL')
 
                 digest_already_tried <<- c(digest_already_tried,
                                     lapply(inits,function(x){x$digest()}))
-
+                
+                toc('estimation_adding_already_tried')
 
                 if(good)
                 {
+                    
                     say(5,"Better ICL criterion found")
                     say(5,"new ICL:",max(ICLs))
                     say(5,"old ICL:",ICL[Q])
+                    
 
                     kmax<-which.max(ICLs)
 
@@ -289,6 +351,9 @@ setRefClass("model",
                     ICL[Q] <<- r$PL - .5*(r$model$n_parameters *
                         log(.self$data_number()) + memberships[[Q]]$ICL_penalty())
                     ret<-TRUE
+
+                    toc('estimation_saving_goods')
+
                     if(prod(dim(allICLs))==0)
                     {
                         allICLs<<-matrix(0,0,2)
@@ -317,6 +382,8 @@ setRefClass("model",
 
         membership_init_quality = function(inits)
         {
+            tic()
+
             quals <- sapply(
                 inits,
                 function(init)
@@ -332,6 +399,9 @@ setRefClass("model",
                     }
                 }
             )
+           
+            toc('quality_already_computed') 
+            
             
             if(any(is.na(quals)))
             {
@@ -363,6 +433,8 @@ setRefClass("model",
                 }
 
                 quals[is.na(quals)] <- naquals
+           
+                toc('quality_computation') 
             }
             return(quals)
         },
