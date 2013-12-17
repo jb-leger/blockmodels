@@ -4,28 +4,29 @@ inline
 void e_fixed_step(SBM & membership, model_type & model, network_type & net, mat & lZ)
 {
     
-    if(model_type::is_sbm_symmetric::value)
-    {
+    for(unsigned int i=0; i<lZ.n_rows; i++)
+        for(unsigned int j=0; j<lZ.n_rows; j++)
+            if(i!=j)
+                for(unsigned int q=0; q<lZ.n_cols; q++)
+                    for(unsigned int l=0; l<lZ.n_cols; l++ )
+                        lZ(i,q) += membership.Z(j,l) * (
+                                                         logf(model,net,i,j,q,l)
+                                                         +
+                                                         logf(model,net,j,i,l,q)
+                                                       );
+}
+
+template<class model_type, class network_type>
+inline
+void e_fixed_step(SBM_sym & membership, model_type & model, network_type & net, mat & lZ)
+{
+    
         for(unsigned int i=0; i<lZ.n_rows; i++)
             for(unsigned int j=0; j<lZ.n_rows; j++)
                 if(i!=j)
                     for(unsigned int q=0; q<lZ.n_cols; q++)
                         for(unsigned int l=0; l<lZ.n_cols; l++ )
                             lZ(i,q) += membership.Z(j,l) * logf(model,net,i,j,q,l);
-    }
-    else
-    {
-        for(unsigned int i=0; i<lZ.n_rows; i++)
-            for(unsigned int j=0; j<lZ.n_rows; j++)
-                if(i!=j)
-                    for(unsigned int q=0; q<lZ.n_cols; q++)
-                        for(unsigned int l=0; l<lZ.n_cols; l++ )
-                            lZ(i,q) += membership.Z(j,l) * (
-                                                             logf(model,net,i,j,q,l)
-                                                             +
-                                                             logf(model,net,j,i,l,q)
-                                                           );
-    }
 }
 
 template<class model_type, class network_type>

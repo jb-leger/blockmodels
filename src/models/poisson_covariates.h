@@ -22,6 +22,7 @@ class poisson_covariates
         // precomputed matrix
         mat Mones;
         mat adjZD;
+        mat adjZDt;
         mat MonesZD;
         mat adjt;
 
@@ -42,22 +43,16 @@ class poisson_covariates
             // precomputation
             Mones = ones<mat>(adj.n_rows,adj.n_cols);
             adjZD = fill_diag(adj,0);
+            adjZDt = adjZD.t();
             MonesZD = fill_diag(Mones,0);
             accu_log_fact(adj,accu_log_fact_X,accu_log_fact_XZD);
             adjt = adj.t();
         }
     };
 
-    /* Keep this as is. This will be usefull when symmetric SBM will be
-     * implemented
-     */
-    struct is_sbm_symmetric
-    {
-        enum { value=false };
-    };
-
     // parameters
     unsigned int n_parameters;
+    bool symmetric;
 
     /* Here you must put the poisson_covariates model parameters */
     mat lambda;
@@ -73,6 +68,21 @@ class poisson_covariates
         beta.fill(0);
 
         n_parameters = lambda.n_elem + beta.n_elem;
+        symmetric = false;
+    }
+    
+    poisson_covariates(SBM_sym & membership, poisson_covariates::network & net)
+    {
+        lambda = (membership.Z.t() * net.adjZD * membership.Z)
+                  /
+                 (membership.Z.t() * net.MonesZD * membership.Z);
+        
+        beta.set_size(net.covariates.n_slices);
+        beta.fill(0);
+
+        n_parameters = lambda.n_rows*(lambda.n_rows+1)/2 + beta.n_elem;
+
+        symmetric = true;
     }
     
     poisson_covariates(LBM & membership, poisson_covariates::network & net)
@@ -85,6 +95,8 @@ class poisson_covariates
         beta.fill(0);
 
         n_parameters = lambda.n_rows * lambda.n_cols + net.covariates.n_slices;
+
+        symmetric = false;
     }
 
     inline
@@ -101,6 +113,7 @@ class poisson_covariates
     /* Keep this. When this is not usefull, this is not used. */
     inline vec to_vector();
     poisson_covariates(SBM &, const vec &);
+    poisson_covariates(SBM_sym &, const vec &);
     poisson_covariates(LBM &, const vec &);
 };
 
@@ -159,7 +172,24 @@ void e_fixed_step(SBM & membership,
     mat eBZD = fill_diag( exp(compute_B(model.beta,net.covariates)), 0);
 
     lZ += -eBZD * membership.Z * model.lambda.t()
-          +net.adjZD * membership.Z * log(model.lambda).t();
+          +net.adjZD * membership.Z * log(model.lambda).t()
+          -eBZD.t() * membership.Z * model.lambda
+          +net.adjZDt * membership.Z * log(model.lambda);
+}
+
+
+
+template<>
+inline
+void e_fixed_step(SBM_sym & membership,
+                  poisson_covariates & model,
+                  poisson_covariates::network & net,
+                  mat & lZ)
+{
+    mat eBZD = fill_diag( exp(compute_B(model.beta,net.covariates)), 0);
+
+    lZ += -eBZD * membership.Z * model.lambda
+          +net.adjZD * membership.Z * log(model.lambda);
 }
 
 
@@ -225,6 +255,36 @@ double PL(poisson_covariates & model,
 
 
 
+template<>
+inline
+double PL(poisson_covariates & model,
+          SBM_sym & membership,
+          poisson_covariates::network & net)
+{
+    mat B = compute_B(model.beta,net.covariates);
+    mat BZD = fill_diag(B,0);
+    mat eBZD = fill_diag(exp(B),0);
+
+    return((
+        accu(
+                -
+                model.lambda
+                %
+                ( membership.Z.t() * eBZD * membership.Z )
+            +
+                log(model.lambda)
+                %
+                ( membership.Z.t() * net.adjZD * membership.Z )
+            )
+        +
+        accu( net.adj%B )
+        - net.accu_log_fact_X
+        ) /2 );
+    
+}
+
+
+
 
 /* If you have defined m_step(LBM &, poisson_covariates &, poisson_covariates::network &)
  * Then
@@ -285,8 +345,10 @@ inline
 vec poisson_covariates::to_vector()
 {
     vec out(n_parameters);
-    out.subvec(0,lambda.n_elem-1) = reshape(lambda,lambda.n_elem,1);
-    out.subvec(lambda.n_elem,n_parameters-1) = beta;
+    vec vlambda = (symmetric) ? vech(lambda) : reshape(lambda,lambda.n_elem,1);
+
+    out.subvec(0,vlambda.n_elem-1) = vlambda;
+    out.subvec(vlambda.n_elem,n_parameters-1) = beta;
     return(out);
 }
 
@@ -312,12 +374,23 @@ poisson_covariates::poisson_covariates(SBM & membership, const vec & vectorized)
     lambda = reshape(vectorized.subvec(0,Q*Q-1),Q,Q);
     beta = vectorized.subvec(Q*Q,vectorized.n_elem-1);
 
-    n_parameters = lambda.n_elem + beta.n_elem;
+    n_parameters = vectorized.n_elem;
+    symmetric = false;
 }
 
 
 
 
+
+poisson_covariates::poisson_covariates(SBM_sym & membership, const vec & vectorized)
+{
+    unsigned int Q=membership.Z.n_cols;
+    lambda = unvech(vectorized.subvec(0,Q*(Q+1)/2-1));
+    beta = vectorized.subvec(Q*(Q+1)/2,vectorized.n_elem-1);
+
+    n_parameters = vectorized.n_elem;
+    symmetric = true;
+}
 
 /* If m_step(LBM &, poisson_covariates &, poisson_covariates::network) is not defined
  * Then
@@ -338,7 +411,8 @@ poisson_covariates::poisson_covariates(LBM & membership, const vec & vectorized)
     lambda = reshape(vectorized.subvec(0,Q1*Q2-1),Q1,Q2);
     beta = vectorized.subvec(Q1*Q2,vectorized.n_elem-1);
 
-    n_parameters = lambda.n_elem + beta.n_elem;
+    n_parameters = vectorized.n_elem;
+    symmetric=false;
 }
 
 
@@ -366,17 +440,21 @@ poisson_covariates::poisson_covariates(LBM & membership, const vec & vectorized)
 inline
 double maximum_step_in_direction(poisson_covariates & model, vec & direction)
 {
-    mat dir_lambda = reshape(direction.subvec(0,model.lambda.n_elem-1),model.lambda.n_rows,model.lambda.n_cols);
+    vec vlambda = (model.symmetric) ? 
+                        vech(model.lambda)
+                        :
+                        reshape(model.lambda,model.lambda.n_elem,1);
     double amax=1;
-    for(unsigned int i=0;i<dir_lambda.n_elem;i++)
+    for(unsigned int i=0;i<vlambda.n_elem;i++)
     {
-        if(dir_lambda(i)!=0 && dir_lambda(i)*model.lambda(i)<0)
+        if(direction(i)!=0 && vlambda(i)*direction(i)<0)
         {
-            double a=-model.lambda(i)/dir_lambda(i);
+            double a=-vlambda(i)/direction(i);
             if(a<amax)
                 amax=a;
         }
     }
+    // no constraints on part of vector concering beta
 
     return(amax);
 }
@@ -422,6 +500,33 @@ vec grad(poisson_covariates & model,
     return(out);
 }
 
+
+
+template<>
+inline
+vec grad(poisson_covariates & model,
+         SBM_sym & membership,
+         poisson_covariates::network & net)
+{
+    mat B = compute_B(model.beta,net.covariates);
+    mat eBZD=fill_diag(exp(B),0);
+
+    mat dPLodlambda = -membership.Z.t() * eBZD * membership.Z
+                      + (membership.Z.t() * net.adjZD * membership.Z) / model.lambda;
+
+    mat coef = net.adjZD - ((membership.Z * model.lambda * membership.Z.t()) % eBZD);
+
+    vec dPLodbeta(model.beta.n_elem);
+
+    for(unsigned int k=0;k<dPLodbeta.n_elem;k++)
+        dPLodbeta(k) = accu(coef % net.covariates.slice(k));
+
+    vec out(model.n_parameters);
+    unsigned int Q = model.lambda.n_rows;
+    out.subvec(0,Q*(Q+1)/2-1) = vech(dPLodlambda)/2;
+    out.subvec(Q*(Q+1)/2,model.n_parameters-1) = dPLodbeta/2;
+    return(out);
+}
 
 
 

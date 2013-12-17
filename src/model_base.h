@@ -26,6 +26,20 @@ double PL(model_type & model, SBM & membership, network_type & net)
 
 template<class model_type, class network_type>
 inline
+double PL(model_type & model, SBM_sym & membership, network_type & net)
+{
+    double S=0;
+
+    for(unsigned int i=0; i<membership.Z.n_rows; i++)
+        for(unsigned int j=i+1; j<membership.Z.n_rows; j++)
+            for(unsigned int q=0; q<membership.Z.n_cols; q++)
+                for(unsigned int l=0; l<membership.Z.n_cols; l++)
+                    S += logf(model,net,i,j,q,l) * membership.Z(i,q) * membership.Z(j,l);
+    return S;
+}
+
+template<class model_type, class network_type>
+inline
 double PL(model_type & model, LBM & membership, network_type & net)
 {
     double S=0;
@@ -50,6 +64,20 @@ vec grad(model_type & model, SBM & membership, network_type & net)
             if(i!=j)
                 for(unsigned int q=0; q<membership.Z.n_cols; q++)
                     for(unsigned int l=0; l<membership.Z.n_cols; l++)
+                        G += grad_logf(model,net,i,j,q,l) * membership.Z(i,q) * membership.Z(j,l);
+    return G;
+}
+
+template<class model_type, class network_type>
+inline
+vec grad(model_type & model, SBM_sym & membership, network_type & net)
+{
+    vec G=zeros<vec>(model.n_parameters);
+
+    for(unsigned int i=0; i<membership.Z.n_rows; i++)
+        for(unsigned int j=i+1; j<membership.Z.n_rows; j++)
+            for(unsigned int q=0; q<membership.Z.n_cols; q++)
+                for(unsigned int l=0; l<membership.Z.n_cols; l++)
                         G += grad_logf(model,net,i,j,q,l) * membership.Z(i,q) * membership.Z(j,l);
     return G;
 }

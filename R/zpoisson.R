@@ -8,6 +8,7 @@ BM_poisson <- setRefClass("BM_poisson",
                             model_name = "poisson",
                             adj = adj,
                             ...)
+            .self$postinit()
         },
         plot_parameters = function(Q)
         {

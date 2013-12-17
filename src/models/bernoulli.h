@@ -41,11 +41,6 @@ class bernoulli
         }
     };
 
-    struct is_sbm_symmetric
-    {
-        enum { value=false };
-    };
-
     /* parameters */
     unsigned int n_parameters;
     mat pi;
@@ -53,6 +48,12 @@ class bernoulli
     bernoulli(SBM & membership, bernoulli::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
+        pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
+    }
+    
+    bernoulli(SBM_sym & membership, bernoulli::network & net)
+    {
+        n_parameters = membership.Z.n_cols * (membership.Z.n_cols+1) / 2;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
     }
     
@@ -78,7 +79,17 @@ inline
 void e_fixed_step(SBM & membership, bernoulli & model, bernoulli::network & net, mat & lZ)
 {
     lZ+= net.adjZD * membership.Z * log(model.pi).t()
-       + net.ones_minus_adj_ZD * membership.Z * log(1-model.pi).t();
+       + net.ones_minus_adj_ZD * membership.Z * log(1-model.pi).t()
+       + net.adjZDt * membership.Z * log(model.pi)
+       + net.ones_minus_adj_ZDt * membership.Z * log(1-model.pi);
+}
+
+template<>
+inline
+void e_fixed_step(SBM_sym & membership, bernoulli & model, bernoulli::network & net, mat & lZ)
+{
+    lZ+= net.adjZD * membership.Z * log(model.pi)
+       + net.ones_minus_adj_ZD * membership.Z * log(1-model.pi);
 }
 
 template<>
@@ -113,6 +124,13 @@ double m_step(SBM & membership, bernoulli & model, bernoulli::network & net)
                     (membership.Z.t() * net.onesZD * membership.Z)
                 )
         );
+}
+
+template<>
+inline
+double m_step(SBM_sym & membership, bernoulli & model, bernoulli::network & net)
+{
+    return m_step<SBM>(membership,model,net)/2;
 }
 
 template<>

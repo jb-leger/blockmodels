@@ -15,13 +15,9 @@ class naive_bernoulli
         }
     };
 
-    struct is_sbm_symmetric
-    {
-        enum { value=false };
-    };
-
     /* parameters */
     unsigned int n_parameters;
+    bool symmetric;
     mat pi;
 
     naive_bernoulli(SBM & membership, naive_bernoulli::network & net)
@@ -29,6 +25,15 @@ class naive_bernoulli
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
         pi.fill(accu(net.adj)/(net.adj.n_rows*net.adj.n_cols));
+        symmetric=false;
+    }
+    
+    naive_bernoulli(SBM_sym & membership, naive_bernoulli::network & net)
+    {
+        n_parameters = membership.Z.n_cols * (membership.Z.n_cols + 1)/2;
+        pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
+        pi.fill(accu(net.adj)/(net.adj.n_rows*net.adj.n_cols));
+        symmetric=true;
     }
     
     naive_bernoulli(LBM & membership, naive_bernoulli::network & net)
@@ -36,6 +41,7 @@ class naive_bernoulli
         n_parameters = membership.Z1.n_cols * membership.Z2.n_cols;
         pi.set_size(membership.Z1.n_cols,membership.Z2.n_cols);
         pi.fill(accu(net.adj)/(net.adj.n_rows*net.adj.n_cols));
+        symmetric=false;
     }
 
     inline
@@ -51,13 +57,22 @@ class naive_bernoulli
     inline
     vec to_vector()
     {
-        return reshape(pi,n_parameters,1);
+        if(symmetric)
+            return vech(pi);
+        else
+            return reshape(pi,n_parameters,1);
     }
 
     naive_bernoulli(SBM & membership, const vec & vectorized)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         pi = reshape(vectorized, membership.Z.n_cols, membership.Z.n_cols);
+    }
+    
+    naive_bernoulli(SBM_sym & membership, const vec & vectorized)
+    {
+        n_parameters = membership.Z.n_cols * (membership.Z.n_cols+1)/2;
+        pi = unvech(vectorized);
     }
     
     naive_bernoulli(LBM & membership, const vec & vectorized)

@@ -81,6 +81,11 @@ Rcpp::List distpatcher_membership_model(std::string & membership_name,
                                                                  model_name,
                                                                  network_from_R);
     
+    if(membership_name == "SBM_sym")
+        return init_membership_and_dispatcher_model<SBM_sym,real_EM>(membership_init_from_R,
+                                                                 model_name,
+                                                                 network_from_R);
+    
     if(membership_name == "LBM")
         return init_membership_and_dispatcher_model<LBM,real_EM>(membership_init_from_R,
                                                                  model_name,

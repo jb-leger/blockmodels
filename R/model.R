@@ -31,8 +31,17 @@ setRefClass("model",
         profiling_t = "numeric"
     ),
     methods = list(
-        init_levels = function()
+        postinit = function()
         {
+            if(membership_name != 'SBM'
+               &&
+               membership_name != 'SBM_sym'
+               &&
+               membership_name != 'LBM'
+               )
+            {
+                stop(paste('Membership',membership_name,'unknown. Are you drunk?'))
+            }
             if(length(verbosity)==0)
             {
                 verbosity<<-4
@@ -86,8 +95,6 @@ setRefClass("model",
         },
         estimate = function(reinitialization_effort=1)
         {
-            .self$init_levels()
-            
             if(plotlevel>=1)
             {
                 dev.new()

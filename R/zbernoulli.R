@@ -8,6 +8,7 @@ BM_bernoulli <- setRefClass("BM_bernoulli",
                             model_name = "bernoulli",
                             adj = adj,
                             ...)
+            .self$postinit()
         },
         plot_parameters = function(Q)
         {

@@ -17,6 +17,7 @@ BM_poisson_covariates <- setRefClass("BM_poisson_covariates",
                             adj = adj,
                             covariates = covariates_list,
                             ...)
+            .self$postinit()
         },
         plot_parameters = function(Q)
         {

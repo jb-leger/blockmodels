@@ -43,3 +43,39 @@ void accu_log_fact(mat & M, double & with_diag, double & without_diag)
 
     without_diag = with_diag-diag;
 }
+
+inline
+vec vech(const mat & M)
+{
+    unsigned int n=M.n_rows;
+    vec v(n*(n+1)/2);
+    
+    unsigned int k=0;
+    for(unsigned int i=0; i<n; i++)
+    {
+        for(unsigned int j=i;j<n; j++)
+        {
+            v(k++)=M(i,j);
+        }
+    }
+    return(v);
+}
+
+inline 
+mat unvech(const vec & v)
+{
+    unsigned int n=((sqrt(1+8*v.n_elem)+1)-1)/2;
+    mat M(n,n);
+    
+    unsigned int k=0;
+    for(unsigned int i=0; i<n; i++)
+    {
+        for(unsigned int j=i;j<n; j++)
+        {
+            M(i,j)=M(j,i)=v(k++);
+        }
+    }
+
+    return(M);
+}
+

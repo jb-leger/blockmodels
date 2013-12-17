@@ -89,5 +89,10 @@ struct SBM
         
 };
 
+struct SBM_sym : public SBM
+{
+    SBM_sym(Rcpp::List & membership_from_R) : SBM(membership_from_R) {}
+};
+
 
 

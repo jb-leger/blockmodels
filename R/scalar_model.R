@@ -5,6 +5,30 @@ setRefClass("scalar_model",
         adj = "matrix"
     ),
     methods = list(
+        postinit = function()
+        {
+            callSuper()
+            if(membership_name=="SBM" || membership_name=="SBM_sym")
+            {
+                if(nrow(adj)!=ncol(adj))
+                {
+                    stop(paste("The adjacency matrix does not have the same number of rows and columns.",
+                               "Vocatus periculosum ad sanitatem est."))
+                }
+            }
+
+            if(membership_name=="SBM_sym")
+            {
+                if(isSymmetric(adj))
+                {
+                    adj <<- (adj+t(adj))/2
+                }
+                else
+                {
+                    stop("Adjacency matrix is not symmetric. You need more sleep.")
+                }
+            }
+        },
         number_of_nodes = function() { dim(adj) },
         show_network = function()
         {
@@ -16,7 +40,7 @@ setRefClass("scalar_model",
             membership <- memberships[[Q]]
             error <- .self$residual(Q)
 
-            if(membership_name == "SBM")
+            if(membership_name == "SBM" || membership_name == "SBM_sym")
             {
                 result <- list()
                 for(q in 1:Q)
@@ -77,6 +101,10 @@ setRefClass("scalar_model",
             {
                 return(dim(adj)[1]*(dim(adj)[1]-1))
             }
+            if(membership_name=="SBM_sym")
+            {
+                return(dim(adj)[1]*(dim(adj)[1]-1)/2)
+            }
             else
             {
                 return(dim(adj)[1]*(dim(adj)[2]))
@@ -84,7 +112,7 @@ setRefClass("scalar_model",
         },
         precompute = function()
         {
-            if(membership_name == "SBM")
+            if(membership_name == "SBM" || membership_name == "SBM_sym")
             {
                 if(length(precomputed)>0)
                 {
@@ -147,7 +175,7 @@ setRefClass("scalar_model",
         provide_init = function(Q)
         {
             .self$precompute()
-            if(membership_name == "SBM")
+            if(membership_name == "SBM" && membership_name == "SBM_sym")
             {
                 return(
                     list(

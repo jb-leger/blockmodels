@@ -6,7 +6,7 @@
 parameters and node membership}
 \usage{BM_bernoulli(membership_type, adj, verbosity = 4, plotlevel = 1)}
 \arguments{
-    \item{membership_type}{The type of node membership, e.g. "SBM", "LBM"}
+    \item{membership_type}{The type of node membership, e.g. "SBM", "SBM_sym", "LBM"}
     \item{adj}{The adjacency matrix}
     \item{verbosity}{The verbosity level, 0 means quiet, by default 4}
     \item{plotlevel}{More level is higher more plot of found values (as ICL

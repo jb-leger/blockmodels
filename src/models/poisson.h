@@ -10,6 +10,7 @@ class poisson
 
         // precalculated matrices for SBM
         mat adjZD;
+        mat adjZDt;
         mat MonesZD;
 
         // precalculated matrices for LBM
@@ -31,16 +32,12 @@ class poisson
             Mones = ones<mat>(adj.n_rows,adj.n_cols);
             Monest = Mones.t();
             adjZD = fill_diag(adj_orig,0);
+            adjZDt = adjZD.t();
             MonesZD = fill_diag(Mones,0);
 
             accu_log_fact(adj,accu_log_fact_X,accu_log_fact_XZD);
 
         }
-    };
-
-    struct is_sbm_symmetric
-    {
-        enum { value=false };
     };
 
     /* parameters */
@@ -50,6 +47,12 @@ class poisson
     poisson(SBM & membership, poisson::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
+        lambda.set_size(membership.Z.n_cols,membership.Z.n_cols);
+    }
+    
+    poisson(SBM_sym & membership, poisson::network & net)
+    {
+        n_parameters = membership.Z.n_cols * (membership.Z.n_cols+1)/2;
         lambda.set_size(membership.Z.n_cols,membership.Z.n_cols);
     }
     
@@ -73,6 +76,16 @@ class poisson
 template<>
 inline
 void e_fixed_step(SBM & membership, poisson & model, poisson::network & net, mat & lZ)
+{
+    lZ+= net.adjZD * membership.Z * log(model.lambda).t()
+       - net.MonesZD * membership.Z * model.lambda.t()
+       + net.adjZDt * membership.Z * log(model.lambda)
+       - net.MonesZD * membership.Z * model.lambda;
+}
+
+template<>
+inline
+void e_fixed_step(SBM_sym & membership, poisson & model, poisson::network & net, mat & lZ)
 {
     lZ+= net.adjZD * membership.Z * log(model.lambda).t()
        - net.MonesZD * membership.Z * model.lambda.t();
@@ -114,6 +127,13 @@ double m_step(SBM & membership, poisson & model, poisson::network & net)
                 )
             - net.accu_log_fact_X
         );
+}
+
+template<>
+inline
+double m_step(SBM_sym & membership, poisson & model, poisson::network & net)
+{
+    return m_step<SBM>(membership,model,net)/2;
 }
 
 template<>
