@@ -175,7 +175,7 @@ setRefClass("scalar_model",
         provide_init = function(Q)
         {
             .self$precompute()
-            if(membership_name == "SBM" && membership_name == "SBM_sym")
+            if(membership_name == "SBM" || membership_name == "SBM_sym")
             {
                 return(
                     list(
