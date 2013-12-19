@@ -3,6 +3,7 @@ dispatcher <- function(membership_name,membership_init,model_name,network,real_E
 	.Call( "dispatcher",
            membership_name,
            membership_init,
+           list(),
            model_name,
            network,
            real_EM,
