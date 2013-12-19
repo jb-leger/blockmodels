@@ -10,9 +10,10 @@ BM_poisson <- setRefClass("BM_poisson",
                             ...)
             .self$postinit()
         },
+        plot_transform = function(x) {log(1+x)},
         plot_parameters = function(Q)
         {
-            matrixplot(model_results[[Q]]$lambda)
+            matrixplot(.self$plot_transform(model_results[[Q]]$lambda))
         },
         prediction = function(Q)
         {

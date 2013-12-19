@@ -237,10 +237,11 @@ setRefClass("scalar_model",
                 cn<-1:ncol(adj)
             }
 
-            matrixplot(adj[order1,order2],rowlabels=rn[order1],collabels=cn[order2])
+            matrixplot(.self$plot_transform(adj[order1,order2]),rowlabels=rn[order1],collabels=cn[order2])
             
-            matrixplot(pred[order1,order2],rowlabels=rn[order1],collabels=cn[order2])
+            matrixplot(.self$plot_transform(pred[order1,order2]),rowlabels=rn[order1],collabels=cn[order2])
         },
+        plot_transform = function(x){x},
         residual = function(Q)
         {
             adj-.self$prediction(Q)
