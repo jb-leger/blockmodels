@@ -156,15 +156,16 @@ setRefClass("model",
         {
             if(membership_name=="LBM")
             {
-                Q <- 2
+                Qmin <- 2
             }
             else
             {
-                Q <- 1
+                Qmin <- 1
             }
+            Q <- Qmin
             Qmax <- length(ICL)
             ret<-FALSE
-            while(which.max(ICL)*1.5>length(ICL) || Q<Qmax)
+            while(which.max(ICL)*1.5>length(ICL) || Q<Qmax || Q<Qmin+2)
             {
                 Q<-Q+1
 
@@ -222,6 +223,11 @@ setRefClass("model",
             {
                 Qmin <- 1
             }
+            if(length(ICL)<=Qmin+1)
+            {
+                return(FALSE)
+            }
+
             for(Q in seq(length(ICL)-1,Qmin+1))
             {
                 say(3,"For",Q,"groups")
