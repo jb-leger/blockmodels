@@ -4,6 +4,8 @@ setRefClass("model",
         model_name = "character",       # e.g. "bernoulli"
         membership_name = "character",  # e.g. "SBM"
 
+        autosave = "character", # autosave filename
+
         # digests are used here
         digest_already_tried = "list",     # initialization already tried
         digest_already_quality_computed = "list", 
@@ -55,6 +57,18 @@ setRefClass("model",
             if(length(profiling_active)==0)
             {
                 profiling_active<<-FALSE
+            }
+
+            if(length(autosave)==0)
+            {
+                autosave<<-""
+            }
+        },
+        save_now = function()
+        {
+            if(nzchar(autosave)>0)
+            {
+                saveRDS(.self,file=autosave)
             }
         },
         tic = function()
@@ -389,6 +403,8 @@ setRefClass("model",
                     say(5,"old ICL:",ICL[Q])
                 }
             }
+
+            .self$save_now()
 
             return(ret)
         },

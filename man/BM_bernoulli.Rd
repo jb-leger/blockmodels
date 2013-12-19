@@ -4,13 +4,18 @@
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership}
-\usage{BM_bernoulli(membership_type, adj, verbosity = 4, plotlevel = 1)}
+\usage{BM_bernoulli(membership_type, adj, verbosity = 4, plotlevel = 1, autosave = "")}
 \arguments{
     \item{membership_type}{The type of node membership, e.g. "SBM", "SBM_sym", "LBM"}
     \item{adj}{The adjacency matrix}
     \item{verbosity}{The verbosity level, 0 means quiet, by default 4}
     \item{plotlevel}{More level is higher more plot of found values (as ICL
 criterion), each time there are computed, are done. 0 means no plot.}
+    \item{autosave}{If \var{autosave} != "", after each estimation, the model
+                    object is writed into file \var{autosave}. The model object
+                    is readable by the function \var{readRDS}. Use-it for long
+                    computation to allow restarting the estimation on system
+                    crash.}
 }
 \examples{
 
