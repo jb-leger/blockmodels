@@ -194,12 +194,16 @@ setRefClass("scalar_model",
                 for(Q1 in 1:(Q-1))
                 {
                     Q2<-Q-Q1
-                    result[[Q1]] <- getRefClass(membership_name)(
-                        classif=list(
-                            blockmodelskmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
-                            blockmodelskmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)
+                    if(Q1<=nrow(adjacency) && Q2<=ncol(adjacency))
+                    {
+                        result[[Q1]] <- getRefClass(membership_name)(
+                            classif=list(
+                                blockmodelskmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
+                                blockmodelskmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)
+                            )
                         )
-                    )
+                    }
+                    
                 }
 
                 return(result)
