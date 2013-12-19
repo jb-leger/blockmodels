@@ -194,7 +194,7 @@ setRefClass("scalar_model",
                 for(Q1 in 1:(Q-1))
                 {
                     Q2<-Q-Q1
-                    if(Q1<=nrow(adjacency) && Q2<=ncol(adjacency))
+                    if(Q1<=nrow(adj) && Q2<=ncol(adj))
                     {
                         result[[Q1]] <- getRefClass(membership_name)(
                             classif=list(
