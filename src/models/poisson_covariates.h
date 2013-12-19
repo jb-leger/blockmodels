@@ -58,41 +58,65 @@ class poisson_covariates
     mat lambda;
     colvec beta;
 
-    poisson_covariates(SBM & membership, poisson_covariates::network & net)
+    poisson_covariates(SBM & membership, Rcpp::List & model_init_from_R, poisson_covariates::network & net)
     {
-        lambda = (membership.Z.t() * net.adjZD * membership.Z)
-                  /
-                 (membership.Z.t() * net.MonesZD * membership.Z);
-        
-        beta.set_size(net.covariates.n_slices);
-        beta.fill(0);
+        if(model_init_from_R.size()==0)
+        {
+            lambda = (membership.Z.t() * net.adjZD * membership.Z)
+                      /
+                     (membership.Z.t() * net.MonesZD * membership.Z);
+            
+            beta.set_size(net.covariates.n_slices);
+            beta.fill(0);
+        }
+        else
+        {
+            lambda = Rcpp::as<mat>(model_init_from_R["lambda"]);
+            beta = Rcpp::as<vec>(model_init_from_R["beta"]);
+        }
 
         n_parameters = lambda.n_elem + beta.n_elem;
         symmetric = false;
     }
     
-    poisson_covariates(SBM_sym & membership, poisson_covariates::network & net)
+    poisson_covariates(SBM_sym & membership, Rcpp::List & model_init_from_R, poisson_covariates::network & net)
     {
-        lambda = (membership.Z.t() * net.adjZD * membership.Z)
-                  /
-                 (membership.Z.t() * net.MonesZD * membership.Z);
-        
-        beta.set_size(net.covariates.n_slices);
-        beta.fill(0);
+        if(model_init_from_R.size()==0)
+        {
+            lambda = (membership.Z.t() * net.adjZD * membership.Z)
+                      /
+                     (membership.Z.t() * net.MonesZD * membership.Z);
+            
+            beta.set_size(net.covariates.n_slices);
+            beta.fill(0);
+        }
+        else
+        {
+            lambda = Rcpp::as<mat>(model_init_from_R["lambda"]);
+            beta = Rcpp::as<vec>(model_init_from_R["beta"]);
+        }
 
         n_parameters = lambda.n_rows*(lambda.n_rows+1)/2 + beta.n_elem;
 
         symmetric = true;
     }
     
-    poisson_covariates(LBM & membership, poisson_covariates::network & net)
+    poisson_covariates(LBM & membership, Rcpp::List & model_init_from_R, poisson_covariates::network & net)
     {
-        lambda = (membership.Z1.t() * net.adj * membership.Z2)
-                  /
-                 (membership.Z1.t() * net.Mones * membership.Z2);
-        
-        beta.set_size(net.covariates.n_slices);
-        beta.fill(0);
+        if(model_init_from_R.size()==0)
+        {
+            lambda = (membership.Z1.t() * net.adj * membership.Z2)
+                      /
+                     (membership.Z1.t() * net.Mones * membership.Z2);
+            
+            beta.set_size(net.covariates.n_slices);
+            beta.fill(0);
+        }
+        else
+        {
+            lambda = Rcpp::as<mat>(model_init_from_R["lambda"]);
+            beta = Rcpp::as<vec>(model_init_from_R["beta"]);
+        }
 
         n_parameters = lambda.n_rows * lambda.n_cols + net.covariates.n_slices;
 

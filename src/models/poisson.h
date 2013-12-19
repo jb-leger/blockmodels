@@ -44,19 +44,19 @@ class poisson
     unsigned int n_parameters;
     mat lambda;
 
-    poisson(SBM & membership, poisson::network & net)
+    poisson(SBM & membership, Rcpp::List & model_init_from_R, poisson::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         lambda.set_size(membership.Z.n_cols,membership.Z.n_cols);
     }
     
-    poisson(SBM_sym & membership, poisson::network & net)
+    poisson(SBM_sym & membership, Rcpp::List & model_init_from_R, poisson::network & net)
     {
         n_parameters = membership.Z.n_cols * (membership.Z.n_cols+1)/2;
         lambda.set_size(membership.Z.n_cols,membership.Z.n_cols);
     }
     
-    poisson(LBM & membership, poisson::network & net)
+    poisson(LBM & membership, Rcpp::List & model_init_from_R, poisson::network & net)
     {
         n_parameters = membership.Z1.n_cols * membership.Z2.n_cols;
         lambda.set_size(membership.Z1.n_cols,membership.Z2.n_cols);

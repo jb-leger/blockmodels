@@ -45,19 +45,19 @@ class bernoulli
     unsigned int n_parameters;
     mat pi;
 
-    bernoulli(SBM & membership, bernoulli::network & net)
+    bernoulli(SBM & membership, Rcpp::List & model_init_from_R, bernoulli::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
     }
     
-    bernoulli(SBM_sym & membership, bernoulli::network & net)
+    bernoulli(SBM_sym & membership, Rcpp::List & model_init_from_R, bernoulli::network & net)
     {
         n_parameters = membership.Z.n_cols * (membership.Z.n_cols+1) / 2;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
     }
     
-    bernoulli(LBM & membership, bernoulli::network & net)
+    bernoulli(LBM & membership, Rcpp::List & model_init_from_R, bernoulli::network & net)
     {
         n_parameters = membership.Z1.n_cols * membership.Z2.n_cols;
         pi.set_size(membership.Z1.n_cols,membership.Z2.n_cols);
