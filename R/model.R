@@ -25,7 +25,7 @@ setRefClass("model",
         last_reinitialization_effort = "numeric",
         allICLs= "matrix",
         verbosity = "numeric",
-        plotlevel = "numeric",
+        plotting = "character",
 
         # profiling
         profiling = "numeric",
@@ -47,11 +47,6 @@ setRefClass("model",
             if(length(verbosity)==0)
             {
                 verbosity<<-4
-            }
-
-            if(length(plotlevel)==0)
-            {
-                plotlevel<<-1
             }
 
             if(length(profiling_active)==0)
@@ -109,7 +104,7 @@ setRefClass("model",
         },
         estimate = function(reinitialization_effort=1)
         {
-            if(plotlevel>=1)
+            if(length(plotting)==0)
             {
                 dev.new()
             }
@@ -395,11 +390,22 @@ setRefClass("model",
                     }
                     allICLs<<-rbind(allICLs,c(Q,ICL[Q]))
                     
-                    if(plotlevel>=1)
+                    if(length(plotting)==0)
                     {
                         plot(allICLs)
                         points(ICL,type='b',col='red')
                     }
+                    else
+                    {
+                        if(nzchar(plotting))
+                        {
+                            dev.pdf(plotting)
+                            plot(allICLs)
+                            points(ICL,type='b',col='red')
+                            dev.off()
+                        }
+                    }
+
 
 
                 

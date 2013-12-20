@@ -4,7 +4,7 @@
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership}
-\usage{BM_poisson(membership_type, adj, verbosity = 4, plotlevel = 1, autosave = "")}
+\usage{BM_poisson(membership_type, adj, verbosity=4, autosave="", plotting=character(0))}
 \arguments{
     \item{membership_type}{The type of node membership, e.g. "SBM", "SBM_sym", "LBM"}
     \item{adj}{The wieghted adjacency matrix}
@@ -16,6 +16,10 @@ criterion), each time there are computed, are done. 0 means no plot.}
                     is readable by the function \var{readRDS}. Use-it for long
                     computation to allow restarting the estimation on system
                     crash.}
+    \item{plotting}{Control plot of ICL values while the estimation is running.
+        If plotting==character(0) (the default), plots are done on screen, if
+            plotting=="", no plot are done, if plotting is a filename, plots are
+    done in this filename.}
 }
 \examples{
     
@@ -34,7 +38,7 @@ criterion), each time there are computed, are done. 0 means no plot.}
         ,80,80)
 
     ## estimation
-    my_model <- BM_poisson("SBM",M,plotlevel=0)
+    my_model <- BM_poisson("SBM",M)
     my_model$estimate()
     which.max(my_model$ICL)
 
@@ -55,7 +59,7 @@ criterion), each time there are computed, are done. 0 means no plot.}
     M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
     ## estimation
-    my_model <- BM_poisson("SBM_sym",M,plotlevel=0)
+    my_model <- BM_poisson("SBM_sym",M)
     my_model$estimate()
     which.max(my_model$ICL)
 
@@ -75,7 +79,7 @@ criterion), each time there are computed, are done. 0 means no plot.}
         ,60,150)
 
     ## estimation
-    my_model <- BM_poisson("LBM",M,plotlevel=0)
+    my_model <- BM_poisson("LBM",M)
     my_model$estimate()
     which.max(my_model$ICL)
     
