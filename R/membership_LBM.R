@@ -84,39 +84,6 @@ setRefClass("LBM",
         {
             (dim(Z1)[2]-1)*log(dim(Z1)[1]) + (dim(Z2)[2]-1)*log(dim(Z2)[1])
         },
-        merges = function()
-        {
-            result <- list()
-            Q1 <- dim(Z1)[2]
-            if(Q1>1)
-            {
-                for(k1 in 1:(Q1-1))
-                {
-                    for(k2 in (k1+1):Q1)
-                    {
-                        Zn<-as.matrix(Z1[,-k2])
-                        Zn[,k1]<-Z1[,k1]+Z1[,k2]
-                        result <- c(result,list(getRefClass('LBM')(from_cc=list(Z1=Zn,Z2=Z2))))
-                    }
-                }
-            }
-            
-            Q2 <- dim(Z2)[2]
-            if(Q2>1)
-            {
-                for(k1 in 1:(Q2-1))
-                {
-                    for(k2 in (k1+1):Q2)
-                    {
-                        Zn<-as.matrix(Z2[,-k2])
-                        Zn[,k1]<-Z2[,k1]+Z2[,k2]
-                        result <- c(result,list(getRefClass('LBM')(from_cc=list(Z1=Z1,Z2=Zn))))
-                    }
-                }
-            }
-
-            return(result)
-        },
         plot = function()
         {
             par(mfrow=c(1,2))

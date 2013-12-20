@@ -62,21 +62,6 @@ setRefClass("SBM",
         {
             (dim(Z)[2]-1)*log(dim(Z)[1])
         },
-        merges = function()
-        {
-            result <- list()
-            Q <- dim(Z)[2]
-            for(k1 in 1:(Q-1))
-            {
-                for(k2 in (k1+1):Q)
-                {
-                    Z2<-Z[,-k2]
-                    Z2[,k1]<-Z[,k1]+Z[,k2]
-                    result <- c(result,list(getRefClass('SBM')(from_cc=list(Z=Z2))))
-                }
-            }
-            return(result)
-        },
         plot = function()
         {
             rn<-rownames(Z)

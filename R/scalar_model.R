@@ -42,7 +42,8 @@ setRefClass("scalar_model",
 
             if(membership_name == "SBM" || membership_name == "SBM_sym")
             {
-                result <- list()
+                memberships_splitted <- list()
+                model_splitted <- list()
                 for(q in 1:Q)
                 {
                     sub_classif <- coordinates_split(
@@ -52,19 +53,21 @@ setRefClass("scalar_model",
                     Z <- cbind(membership$Z,membership$Z[,q])
                     Z[,q] <- Z[,q]*sub_classif
                     Z[,Q+1] <- Z[,Q+1]*(1-sub_classif)
-                    result <- c(result, list(
+                    memberships_splitted <- c(memberships_splitted, list(
                             getRefClass(membership_name)(from_cc=list(Z=Z))
                         ))
+                    model_splitted <- c(model_splitted,list(.self$split_model(Q,q,0)))
                 }
-                return(result)
             }
             if(membership_name == "LBM")
             {
 
+                memberships_splitted <- list()
+                model_splitted <- list()
+                
                 Q1<-dim(membership$Z1)[2]
                 Q2<-dim(membership$Z2)[2]
 
-                result <- list()
                 for(q in 1:Q1)
                 {
                     sub_classif <- coordinates_split(
@@ -74,9 +77,10 @@ setRefClass("scalar_model",
                     Z1 <- cbind(membership$Z1,membership$Z1[,q])
                     Z1[,q] <- Z1[,q]*sub_classif
                     Z1[,Q1+1] <- Z1[,Q1+1]*(1-sub_classif)
-                    result <- c(result, list(
+                    memberships_splitted <- c(memberships_splitted, list(
                             getRefClass(membership_name)(from_cc=list(Z1=Z1,Z2=membership$Z2))
                         ))
+                    model_splitted <- c(model_splitted,list(.self$split_model(Q,q,1)))
                 }
                 
                 for(q in 1:Q2)
@@ -88,12 +92,14 @@ setRefClass("scalar_model",
                     Z2 <- cbind(membership$Z2,membership$Z2[,q])
                     Z2[,q] <- Z2[,q]*sub_classif
                     Z2[,Q2+1] <- Z2[,Q2+1]*(1-sub_classif)
-                    result <- c(result, list(
+                    memberships_splitted <- c(memberships_splitted, list(
                             getRefClass(membership_name)(from_cc=list(Z1=membership$Z1,Z2=Z2))
                         ))
+                    model_splitted <- c(model_splitted,list(.self$split_model(Q,q,2)))
                 }
-                return(result)
             }
+
+            return(list(memberships=memberships_splitted,models=model_splitted))
         },
         data_number = function()
         {
