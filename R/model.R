@@ -399,7 +399,7 @@ setRefClass("model",
                     {
                         if(nzchar(plotting))
                         {
-                            dev.pdf(plotting)
+                            pdf(plotting)
                             plot(allICLs)
                             points(ICL,type='b',col='red')
                             dev.off()
