@@ -128,7 +128,6 @@ setRefClass("model",
                     do_with_inits(
                         list(getRefClass(membership_name)(
                             network_size=.self$number_of_nodes())),
-                        list(list()),
                         2,reinitialization_effort)
                 }
                 else
@@ -137,7 +136,6 @@ setRefClass("model",
                     do_with_inits(
                         list(getRefClass(membership_name)(
                             network_size=.self$number_of_nodes())),
-                        list(list()),
                         1,reinitialization_effort)
 
                 }
@@ -188,31 +186,27 @@ setRefClass("model",
 
                     tic()
                      
-                    memberships_inits <- .self$provide_init(Q)
-                    model_inits <- lapply(memberships_inits,function(x){list()})
+                    inits <- .self$provide_init(Q)
 
                     toc('init_SC')
                     
                 }
                 else
                 {
-                    memberships_inits <- list()
-                    model_inits <- list(list())
+                    inits <- list()
                 }
 
                 say(4,"Init from splitting groups from",Q-1,"groups")
                
                 tic() 
                 
-                splitted<-.self$split_membership(Q-1)
-                memberships_inits<-c(memberships_inits,splitted$memberships)
-                model_inits<-c(model_inits,splitted$models)
+                inits <- c(inits,.self$split_membership(Q-1))
 
                 toc('init_split')
 
-                if(length(memberships_inits)>0)
+                if(length(inits)>0)
                 {
-                    r<-.self$do_with_inits(memberships_inits,model_inits,Q,reinitialization_effort)
+                    r<-.self$do_with_inits(inits,Q,reinitialization_effort)
                     ret<-ret||r
                 }
                 else
@@ -250,13 +244,13 @@ setRefClass("model",
 
                 tic()
 
-                merged <- merge_membership(Q+1)
+                inits <- merge_membership(memberships[[Q+1]])
 
                 toc('init_merges')                
 
-                if(length(merged$memberships)>0)
+                if(length(inits)>0)
                 {
-                    r<-.self$do_with_inits(merged$memberships,merged$models,Q,reinitialization_effort)
+                    r<-.self$do_with_inits(inits,Q,reinitialization_effort)
                     ret<-ret||r
                 }
                 else
@@ -268,14 +262,14 @@ setRefClass("model",
             return(ret)
         },
 
-        do_with_inits = function(memberships_inits,model_inits,Q,reinitialization_effort)
+        do_with_inits = function(inits,Q,reinitialization_effort)
         {
-            say(4,length(memberships_inits),"initializations provided")
+            say(4,length(inits),"initializations provided")
 
             tic()
             
             filter<-sapply(
-                memberships_inits,
+                inits,
                 function(init)
                 {
                     d<-init$digest()
@@ -295,32 +289,30 @@ setRefClass("model",
 
             nb_init_max <- floor(1+4*reinitialization_effort*sqrt(Q))
 
-            say(5,length(memberships_inits)-sum(filter),"initializations already used")
+            say(5,length(inits)-sum(filter),"initializations already used")
             
-            if(length(memberships_inits)>nb_init_max)
+            if(length(inits)>nb_init_max)
             {
-                quality<-.self$membership_init_quality(memberships_inits,model_inits)
+                quality<-.self$membership_init_quality(inits)
                 seuil <- (-sort(-quality))[nb_init_max]
                 filter <- filter & (quality >= seuil)
             }
 
-            memberships_inits <- memberships_inits[filter]
-            model_inits <- model_inits[filter]
+            inits <- inits[filter]
 
-            say(4,"Estimation with",length(memberships_inits),"initializations")
+            say(4,"Estimation with",length(inits),"initializations")
 
             ret<-FALSE
 
             
-            if(length(memberships_inits)>0)
+            if(length(inits)>0)
             {
 
                 tic()
 
-                results<-mcMap(
+                results<-mclapply(
+                    inits,
                     .self$do_one_estim,
-                    memberships_inits,
-                    model_inits,
                     mc.cores=detectCores(),
                     mc.preschedule=FALSE)
             
@@ -352,7 +344,7 @@ setRefClass("model",
                 toc('estimation_computation_ICL')
 
                 digest_already_tried <<- c(digest_already_tried,
-                                    lapply(memberships_inits,function(x){x$digest()}))
+                                    lapply(inits,function(x){x$digest()}))
                 
                 toc('estimation_adding_already_tried')
 
@@ -423,12 +415,12 @@ setRefClass("model",
             return(ret)
         },
 
-        membership_init_quality = function(memberships_inits,model_inits)
+        membership_init_quality = function(inits)
         {
             tic()
 
             quals <- sapply(
-                memberships_inits,
+                inits,
                 function(init)
                 {
                     qual <- digest_already_quality_computed[[init$digest()]]
@@ -448,36 +440,31 @@ setRefClass("model",
             
             if(any(is.na(quals)))
             {
-                memberships_inits<-memberships_inits[is.na(quals)]
-                model_inits<-model_inits[is.na(quals)]
+                inits<-inits[is.na(quals)]
 
-                naquals<- simplify2array(
-                    mcMap(
-                        function(membership_init,model_init)
-                        {
-                            
+                naquals<- sapply(
+                    inits,
+                    function(membership_init)
+                    {
+                        
 
-                            r <- dispatcher(membership_name,
-                                            membership_init$to_cc(),
-                                            model_init,
-                                            model_name,
-                                            .self$network_to_cc(),
-                                            FALSE)
+                        r <- dispatcher(membership_name,
+                                        membership_init$to_cc(),
+                                        model_name,
+                                        .self$network_to_cc(),
+                                        FALSE)
 
-                            local_ICL <- r$PL - .5*(r$model$n_parameters *
-                                                log(.self$data_number())
-                                        +
-                                        getRefClass(membership_name)(
-                                                from_cc=r$membership)$ICL_penalty())
-                        },
-                        memberships_inits,
-                        model_inits
-                    )
+                        local_ICL <- r$PL - .5*(r$model$n_parameters *
+                                            log(.self$data_number())
+                                    +
+                                    getRefClass(membership_name)(
+                                            from_cc=r$membership)$ICL_penalty())
+                    }
                 )
 
-                for(i in 1:length(memberships_inits))
+                for(i in 1:length(inits))
                 {
-                    digest_already_quality_computed[[memberships_inits[[i]]$digest()]] <<- naquals[i]
+                    digest_already_quality_computed[[inits[[i]]$digest()]] <<- naquals[i]
                 }
 
                 quals[is.na(quals)] <- naquals
@@ -487,12 +474,11 @@ setRefClass("model",
             return(quals)
         },
 
-        do_one_estim = function(membership_init,model_init)
+        do_one_estim = function(membership_init)
         {
             return(
                 dispatcher(membership_name,
                     membership_init$to_cc(),
-                    model_init,
                     model_name,
                     .self$network_to_cc(),
                     TRUE)
@@ -507,14 +493,13 @@ setRefClass("model",
             }
             else
             {
-                splitted<-.self$split_membership_model(Q)
+                splitted_membership<-.self$split_membership_model(Q)
                 digest_already_splitted <<- c(digest_already_splitted,list(d))
-                return(splitted)
+                return(splitted_membership)
             }
         },
-        merge_membership = function(Q)
+        merge_membership = function(membership)
         {
-            membership <- memberships[[Q]]
             d<-membership$digest()
             if(any(sapply(digest_already_merged,function(x){x==d})))
             {
@@ -522,73 +507,14 @@ setRefClass("model",
             }
             else
             {
-                memberships_merged <- list()
-                model_merged <- list()
-                if(membership_name == "SBM" || membership_name == "SBM_sym")
-                {
-                    Z<-membership$Z
-                    for(q in 1:(Q-1))
-                    {
-                        for(l in (q+1):Q)
-                        {
-                            Zn<-Z[,-l]
-                            Zn[,q]<-Zn[,q]+Z[,l]
-                            memberships_merged <- c(memberships_merged,list(
-                                getRefClass(membership_name)(from_cc=list(Z=Zn))))
-                            model_merged <- c(model_merged,list(
-                                .self$merge_model(Q,q,l,sum(Z[,q]),sum(Z[,l]),0)))
-                        }
-                    }
-                }
-                else
-                {
-                    Q1<-ncol(membership$Z1)
-                    Q2<-ncol(membership$Z2)
-                    Z1 <- membership$Z1
-                    Z2 <- membership$Z2
-                    if(Q1>1)
-                    {
-                        for(q in 1:(Q1-1))
-                        {
-                            for(l in (q+1):Q1)
-                            {
-                                Zn<-as.matrix(Z1[,-l])
-                                Zn[,q]<-Zn[,q]+Z1[,l]
-                                memberships_merged <- c(memberships_merged,list(
-                                    getRefClass(membership_name)(from_cc=list(Z1=Zn,Z2=Z2))))
-                                model_merged <- c(model_merged,list(
-                                    .self$merge_model(Q,q,l,sum(Z1[,q]),sum(Z1[,l]),1)))
-                            }
-                        }
-                    }
-                    if(Q2>1)
-                    {
-                        for(q in 1:(Q2-1))
-                        {
-                            for(l in (q+1):Q2)
-                            {
-                                Zn<-as.matrix(Z2[,-l])
-                                Zn[,q]<-Zn[,q]+Z2[,l]
-                                memberships_merged <- c(memberships_merged,list(
-                                    getRefClass(membership_name)(from_cc=list(Z1=Z1,Z2=Zn))))
-                                model_merged <- c(model_merged,list(
-                                    .self$merge_model(Q,q,l,sum(Z2[,q]),sum(Z2[,l]),2)))
-                            }
-                        }
-                    }
-                }
-
-
-                merged<-list(memberships=memberships_merged,models=model_merged)
+                merged_membership<-membership$merges()
                 digest_already_merged <<- c(digest_already_merged,list(d))
-                return(merged)
+                return(merged_membership)
             }
         },
         precompute = function() {},
         plot_obs_pred = function(Q) {},
         plot_parameters = function(Q) {},
-        split_model = function(Q,q,type) {list()},
-        merge_model = function(Q,q,l,pq,pl,type) {list()},
         plot_all = function(Q = which.max(.self$ICL))
         {
             dev.new()

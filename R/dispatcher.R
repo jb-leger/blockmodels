@@ -1,9 +1,9 @@
 
-dispatcher <- function(membership_name,membership_init,model_init,model_name,network,real_EM){
+dispatcher <- function(membership_name,membership_init,model_name,network,real_EM){
 	.Call( "dispatcher",
            membership_name,
            membership_init,
-           model_init,
+           list(),
            model_name,
            network,
            real_EM,

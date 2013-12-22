@@ -56,65 +56,7 @@ BM_poisson_covariates <- setRefClass("BM_poisson_covariates",
                     ) * exp(B)
                 )
             }
-        },
-        split_model=function(Q,q,type)
-        {
-            lambda <- model_results[[Q]]$lambda
-            if(membership_name == "SBM" && membership_name == "SBM_sym")
-            {
-                lambda2<-matrix(1,Q+1,Q+1)
-                lambda2[1:Q,1:Q] <- lambda
-                lambda2[Q+1,]<-lambda[q,]
-                lambda2[,Q+1]<-lambda[,q]
-                lambda2[Q+1,Q+1]<-lambda[q,q]
-            }
-            else
-            {
-                Q1<-nrow(lambda)
-                Q2<-ncol(lambda)
-                if(type==1)
-                {
-                    lambda2<-matrix(1,Q1+1,Q2)
-                    lambda2[1:Q1,]<-lambda
-                    lambda2[Q1+1,]<-lambda[q,]
-                }
-                else
-                {
-                    lambda2<-matrix(1,Q1,Q2+1)
-                    lambda2[,1:Q2]<-lambda
-                    lambda2[,Q2+1]<-lambda[,q]
-                }
-            }
-            return(list(lambda=lambda2,beta=model_results[[Q]]$beta))
-        },
-        merge_model=function(Q,q,l,pq,pl,type)
-        {
-            lambda<-model_results[[Q]]$lambda
-            if(membership_name == "SBM" || membership_name == "SBM_sym")
-            {
-                lambda[q,] <- (pq*lambda[q,]+pl*lambda[l,])/(pq+pl)
-                lambda[,q] <- (pq*lambda[,q]+pl*lambda[,l])/(pq+pl)
-                lambda2<-lambda[-l,-l]
-            }
-            else
-            {
-                Q1<-nrow(lambda)
-                Q2<-ncol(lambda)
-                if(type==1)
-                {
-                    lambda[q,] <- (pq*lambda[q,]+pl*lambda[l,])/(pq+pl)
-                    lambda2<-lambda[-l,]
-                }
-                else
-                {
-                    lambda[,q] <- (pq*lambda[,q]+pl*lambda[,l])/(pq+pl)
-                    lambda2<-lambda[,-l]
-                }
-            }
-            return(list(lambda=lambda2,beta=model_results[[Q]]$beta))
         }
-
     )
-
 )
 
