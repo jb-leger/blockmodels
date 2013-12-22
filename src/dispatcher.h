@@ -20,20 +20,18 @@ using namespace arma;
 
 template<class membership_type, class model_type, class network_type, bool real_EM>
 Rcpp::List estim(membership_type & membership_init,
-           Rcpp::List & model_init_from_R,
            Rcpp::List & network_from_R)
 {
     network_type net(network_from_R);
 
     result<membership_type, model_type> res =
-        em<membership_type, model_type, network_type, real_EM>( membership_init, model_init_from_R, net );
+        em<membership_type, model_type, network_type, real_EM>( membership_init, net );
 
     return res.export_to_R();
 }
 
 template<class membership_type, bool real_EM>
 Rcpp::List dispatcher_model(membership_type & membership_init,
-                      Rcpp::List & model_init_from_R,
                       std::string & model_name,
                       Rcpp::List & network_from_R)
 {
@@ -42,19 +40,19 @@ Rcpp::List dispatcher_model(membership_type & membership_init,
 
     if(model_name == "naive_bernoulli")
         return estim<membership_type, naive_bernoulli, naive_bernoulli::network, real_EM>(
-                membership_init, model_init_from_R, network_from_R);
+                membership_init, network_from_R);
 
     if(model_name == "bernoulli")
         return estim<membership_type, bernoulli, bernoulli::network, real_EM>(
-                membership_init, model_init_from_R, network_from_R);
+                membership_init, network_from_R);
     
     if(model_name == "poisson")
         return estim<membership_type, poisson, poisson::network, real_EM>(
-                membership_init, model_init_from_R, network_from_R);
+                membership_init, network_from_R);
 
     if(model_name == "poisson_covariates")
         return estim<membership_type, poisson_covariates, poisson_covariates::network, real_EM>(
-                membership_init, model_init_from_R, network_from_R);
+                membership_init, network_from_R);
 
     // What we are doing here ? Nothing.
     return Rcpp::List();
@@ -62,19 +60,17 @@ Rcpp::List dispatcher_model(membership_type & membership_init,
 
 template<class membership_type, bool real_EM>
 Rcpp::List init_membership_and_dispatcher_model(Rcpp::List & membership_from_R,
-                                          Rcpp::List & model_init_from_R,
                                           std::string & model_name,
                                           Rcpp::List & network_from_R)
 {
     membership_type membership_init(membership_from_R);
     return dispatcher_model<membership_type,real_EM>(
-            membership_init, model_init_from_R, model_name, network_from_R);
+            membership_init, model_name, network_from_R);
 }
 
 template<bool real_EM>
 Rcpp::List distpatcher_membership_model(std::string & membership_name,
                                   Rcpp::List & membership_init_from_R,
-                                  Rcpp::List & model_init_from_R,
                                   std::string & model_name,
                                   Rcpp::List & network_from_R)
 {
@@ -82,19 +78,16 @@ Rcpp::List distpatcher_membership_model(std::string & membership_name,
 
     if(membership_name == "SBM")
         return init_membership_and_dispatcher_model<SBM,real_EM>(membership_init_from_R,
-                                                                 model_init_from_R,
                                                                  model_name,
                                                                  network_from_R);
     
     if(membership_name == "SBM_sym")
         return init_membership_and_dispatcher_model<SBM_sym,real_EM>(membership_init_from_R,
-                                                                 model_init_from_R,
                                                                  model_name,
                                                                  network_from_R);
     
     if(membership_name == "LBM")
         return init_membership_and_dispatcher_model<LBM,real_EM>(membership_init_from_R,
-                                                                 model_init_from_R,
                                                                  model_name,
                                                                  network_from_R);
 
@@ -107,7 +100,6 @@ Rcpp::List distpatcher_membership_model(std::string & membership_name,
 RcppExport
 SEXP dispatcher(SEXP membership_name,
                 SEXP membership_init_from_R,
-                SEXP model_init_from_R,
                 SEXP model_name,
                 SEXP network_from_R,
                 SEXP real_EM);

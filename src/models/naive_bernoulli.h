@@ -20,7 +20,7 @@ class naive_bernoulli
     bool symmetric;
     mat pi;
 
-    naive_bernoulli(SBM & membership, Rcpp::List & model_init_from_R, naive_bernoulli::network & net)
+    naive_bernoulli(SBM & membership, naive_bernoulli::network & net)
     {
         n_parameters = membership.Z.n_cols * membership.Z.n_cols;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
@@ -28,7 +28,7 @@ class naive_bernoulli
         symmetric=false;
     }
     
-    naive_bernoulli(SBM_sym & membership, Rcpp::List & model_init_from_R, naive_bernoulli::network & net)
+    naive_bernoulli(SBM_sym & membership, naive_bernoulli::network & net)
     {
         n_parameters = membership.Z.n_cols * (membership.Z.n_cols + 1)/2;
         pi.set_size(membership.Z.n_cols,membership.Z.n_cols);
@@ -36,7 +36,7 @@ class naive_bernoulli
         symmetric=true;
     }
     
-    naive_bernoulli(LBM & membership, Rcpp::List & model_init_from_R, naive_bernoulli::network & net)
+    naive_bernoulli(LBM & membership, naive_bernoulli::network & net)
     {
         n_parameters = membership.Z1.n_cols * membership.Z2.n_cols;
         pi.set_size(membership.Z1.n_cols,membership.Z2.n_cols);
