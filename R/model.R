@@ -23,9 +23,9 @@ setRefClass("model",
         ICL = "numeric",                # ICL of found models
         precomputed = "list",
         last_reinitialization_effort = "numeric",
-        allICLs= "matrix",
         verbosity = "numeric",
         plotting = "character",
+        plotting_data = "list",
 
         # profiling
         profiling = "numeric",
@@ -343,6 +343,32 @@ setRefClass("model",
                
                 toc('estimation_computation_ICL')
 
+                if(membership_name=="SBM" || membership_name=="SBM_sym")
+                {
+                    xQ <- sapply(
+                        results,
+                        function(r)
+                        {
+                            ncol(getRefClass(membership_name)(from_cc=r$membership)$Z)
+                        }
+                    )
+                }
+                else
+                {
+                    xQ <- sapply(
+                        results,
+                        function(r)
+                        {
+                            membership<-getRefClass(membership_name)(from_cc=r$membership)
+                            return(sqrt(ncol(membership$Z1)*ncol(membership$Z2)))
+                        }
+                    )
+                }
+                plotting_data$xQ <<- c(plotting_data$xQ,xQ)
+                plotting_data$ICL <<- c(plotting_data$ICL,ICLs)
+
+                toc('updating_plotting_data')
+
                 digest_already_tried <<- c(digest_already_tried,
                                     lapply(inits,function(x){x$digest()}))
                 
@@ -376,28 +402,6 @@ setRefClass("model",
 
                     toc('estimation_saving_goods')
 
-                    if(prod(dim(allICLs))==0)
-                    {
-                        allICLs<<-matrix(0,0,2)
-                    }
-                    allICLs<<-rbind(allICLs,c(Q,ICL[Q]))
-                    
-                    if(length(plotting)==0)
-                    {
-                        plot(allICLs)
-                        points(ICL,type='b',col='red')
-                    }
-                    else
-                    {
-                        if(nzchar(plotting))
-                        {
-                            pdf(plotting)
-                            plot(allICLs)
-                            points(ICL,type='b',col='red')
-                            dev.off()
-                        }
-                    }
-
 
 
                 
@@ -408,6 +412,67 @@ setRefClass("model",
                     say(5,"better ICL found:",max(ICLs))
                     say(5,"old ICL:",ICL[Q])
                 }
+                
+                tic()
+
+                plot_type<-0
+                if(length(plotting)==0)
+                {
+                    plot_type<-1
+                }
+                else
+                {
+                    if(nzchar(plotting))
+                    {
+                        plot_type<-2
+                    }
+                }
+
+                if(plot_type>0)
+                {
+                    if(plot_type==2)
+                    {
+                        pdf(plotting)
+                    }
+                    if(membership_name=="LBM")
+                    {
+                        xlab<-"gemetrical_mean (Q1,Q2)"
+                        xQ<-sapply(memberships[2:length(ICL)],function(m){
+                                   sqrt(ncol(m$Z1)*ncol(m$Z2))})
+                        yICL<-ICL[2:length(ICL)]
+                    }
+                    else
+                    {
+                        xlab<-"Q"
+                        xQ<-1:length(ICL)
+                        yICL<-ICL
+                    }
+                    par(bty="l")
+                    if(max(xQ)<=4)
+                    {
+                        ylim <- range(yICL)
+                    }
+                    else
+                    {
+                        ylim <- range(yICL[xQ>=2])
+                    }
+
+                    plot(
+                        x=plotting_data$xQ,
+                        y=plotting_data$ICL,
+                        xlab=xlab,
+                        ylab="ICL",
+                        ylim=ylim,
+                        pch=19
+                    )
+                    o<-order(xQ)
+                    points(x=xQ[o],y=yICL[o],pch=19,col="red")
+                    if(plot_type==2)
+                    {
+                        dev.off()
+                    }
+                }
+
             }
 
             .self$save_now()
