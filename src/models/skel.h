@@ -44,14 +44,6 @@ class MODEL
         }
     };
 
-    /* Keep this as is. This will be usefull when symmetric SBM will be
-     * implemented
-     */
-    struct is_sbm_symmetric
-    {
-        enum { value=false };
-    };
-
     // parameters
     unsigned int n_parameters;
 
@@ -65,7 +57,7 @@ class MODEL
          */
     }
     
-    MODEL(SBM & membership, MODEL::network & net)
+    MODEL(SBM_sym & membership, MODEL::network & net)
     {
         /* Here you must intialize the number of parameters (n_parameters) and
          * your model parameters, knowing the membership and the network in the
