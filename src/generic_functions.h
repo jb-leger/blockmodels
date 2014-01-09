@@ -66,8 +66,10 @@ double m_step(membership_type & membership, model_type & model, network_type & n
     #endif
 
     double gain=0;
+    unsigned int bfgs_iteration_counter=0;
     do
     {
+        bfgs_iteration_counter++;
         vec direction = solve(pseudo_hessian, -gradient);
         double D_direction = mat(direction.t()*gradient)(0);
         
@@ -78,17 +80,23 @@ double m_step(membership_type & membership, model_type & model, network_type & n
         direction.print("direction:");
         #endif
 
-        double a=1.5 * maximum_step_in_direction(model,direction);
+        double a=1.99 * maximum_step_in_direction(model,direction);
         double new_value=0;
+
+        unsigned int line_search_iteration_counter = 0;
         do
         {
+            line_search_iteration_counter++;
             a *= .5;
             model_type model_added = copy_and_add(model,membership,a*direction);
             new_value = - PL(model_added,membership, net);
             #ifdef DEBUG_M
             printf("line search: a=%f value=%f\n",a,new_value);
             #endif
-        } while(new_value-value > .25 * a * D_direction);
+        } while(new_value-value > .25 * a * D_direction && line_search_iteration_counter < LINE_SEARCH_ITER_MAX);
+
+        if(line_search_iteration_counter == LINE_SEARCH_ITER_MAX)
+            break;
 
         model = copy_and_add(model,membership,a*direction);
 
@@ -106,17 +114,9 @@ double m_step(membership_type & membership, model_type & model, network_type & n
         gradient.print("gradient:");
         #endif
 
-    } while( gain > TOL_M );
+    } while( gain > TOL_M && bfgs_iteration_counter < BFGS_ITER_MAX);
 
     return -value; /* value is the opposite of the pseudo likelihood */
 }
-
-
-
-        
-
-
-
-
 
 
