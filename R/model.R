@@ -507,24 +507,28 @@ setRefClass("model",
             {
                 inits<-inits[is.na(quals)]
 
-                naquals<- sapply(
-                    inits,
-                    function(membership_init)
-                    {
-                        
+                naquals<- simplify2array(
+                    mclapply(
+                        inits,
+                        function(membership_init)
+                        {
+                            
 
-                        r <- dispatcher(membership_name,
-                                        membership_init$to_cc(),
-                                        model_name,
-                                        .self$network_to_cc(),
-                                        FALSE)
+                            r <- dispatcher(membership_name,
+                                            membership_init$to_cc(),
+                                            model_name,
+                                            .self$network_to_cc(),
+                                            FALSE)
 
-                        local_ICL <- r$PL - .5*(r$model$n_parameters *
-                                            log(.self$data_number())
-                                    +
-                                    getRefClass(membership_name)(
-                                            from_cc=r$membership)$ICL_penalty())
-                    }
+                            local_ICL <- r$PL - .5*(r$model$n_parameters *
+                                                log(.self$data_number())
+                                        +
+                                        getRefClass(membership_name)(
+                                                from_cc=r$membership)$ICL_penalty())
+                        },
+                        mc.cores=detectCores(),
+                        mc.preschedule=FALSE
+                    )
                 )
 
                 for(i in 1:length(inits))
