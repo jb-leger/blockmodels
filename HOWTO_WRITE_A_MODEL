@@ -16,7 +16,7 @@
 5. Edit src/Makevars, add -Wall to PKG_CPPFLAGS
 
 6. Compile your code. As your modification are in .h files, you must touch the
-   file src/dispatcher.h at each recompilation to force recompilation.
+   file src/dispatcher.cc at each recompilation to force recompilation.
 
    cd ..
    touch blockmodels/src/dispatcher.cc
@@ -32,5 +32,7 @@
 8. Write R documentation file.
 
    If you want to submit your model, example must be runnable.
+   You can write by hand your documentation file in man/ or write a
+   documentation file in orig_man using macros and run the script gen_man.
 
 9. Set export of you model in NAMESPACE.
