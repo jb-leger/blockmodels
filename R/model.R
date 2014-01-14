@@ -310,11 +310,11 @@ setRefClass("model",
 
                 tic()
 
-                results<-mclapply(
+                results<-parallel_lapply(
                     inits,
                     .self$do_one_estim,
                     mc.cores=detectCores(),
-                    mc.preschedule=FALSE)
+                    verbose=(verbosity>4))
             
                 toc('estimation_run')
 
@@ -508,7 +508,7 @@ setRefClass("model",
                 inits<-inits[is.na(quals)]
 
                 naquals<- simplify2array(
-                    mclapply(
+                    parallel_lapply(
                         inits,
                         function(membership_init)
                         {
@@ -527,7 +527,7 @@ setRefClass("model",
                                                 from_cc=r$membership)$ICL_penalty())
                         },
                         mc.cores=detectCores(),
-                        mc.preschedule=FALSE
+                        verbose=(verbosity>4)
                     )
                 )
 
