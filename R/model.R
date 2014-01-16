@@ -46,7 +46,7 @@ setRefClass("model",
             }
             if(length(verbosity)==0)
             {
-                verbosity<<-4
+                verbosity<<-6
             }
 
             if(length(profiling_active)==0)
@@ -104,10 +104,6 @@ setRefClass("model",
         },
         estimate = function(reinitialization_effort=1)
         {
-            if(length(plotting)==0)
-            {
-                dev.new()
-            }
             if(!any(last_reinitialization_effort==reinitialization_effort))
             {
                 digest_already_splitted <<- list()
@@ -179,10 +175,11 @@ setRefClass("model",
                 Q<-Q+1
 
                 say(3,"For",Q,"groups")
+                say(4,'Selecting initialization')
 
                 if(Q>length(ICL) || changing_effort)
                 {
-                    say(4,"Init from spectral clustering")
+                    say(5,"Init from spectral clustering")
 
                     tic()
                      
@@ -196,7 +193,7 @@ setRefClass("model",
                     inits <- list()
                 }
 
-                say(4,"Init from splitting groups from",Q-1,"groups")
+                say(5,"Init from splitting groups from",Q-1,"groups")
                
                 tic() 
                 
@@ -240,7 +237,8 @@ setRefClass("model",
             for(Q in seq(length(ICL)-1,Qmin+1))
             {
                 say(3,"For",Q,"groups")
-                say(4,"Init from merging groups from",Q+1,"groups")
+                say(4,"Selecting intializations")
+                say(5,"Init from merging groups from",Q+1,"groups")
 
                 tic()
 
@@ -264,7 +262,7 @@ setRefClass("model",
 
         do_with_inits = function(inits,Q,reinitialization_effort)
         {
-            say(4,length(inits),"initializations provided")
+            say(5,length(inits),"initializations provided")
 
             tic()
             
@@ -293,6 +291,7 @@ setRefClass("model",
             
             if(length(inits)>nb_init_max)
             {
+                say(5,'Computing intializations quality')
                 quality<-.self$membership_init_quality(inits)
                 seuil <- (-sort(-quality))[nb_init_max]
                 filter <- filter & (quality >= seuil)
@@ -378,8 +377,8 @@ setRefClass("model",
                 {
                     
                     say(5,"Better ICL criterion found")
-                    say(5,"new ICL:",max(ICLs))
-                    say(5,"old ICL:",ICL[Q])
+                    say(6,"new ICL:",max(ICLs))
+                    say(6,"old ICL:",ICL[Q])
                     
 
                     kmax<-which.max(ICLs)
@@ -409,8 +408,8 @@ setRefClass("model",
                 else
                 {
                     say(5,"Useless, no better ICL criterion found")
-                    say(5,"better ICL found:",max(ICLs))
-                    say(5,"old ICL:",ICL[Q])
+                    say(6,"better ICL found:",max(ICLs))
+                    say(6,"old ICL:",ICL[Q])
                 }
                 
                 tic()
@@ -584,15 +583,6 @@ setRefClass("model",
         precompute = function() {},
         plot_obs_pred = function(Q) {},
         plot_parameters = function(Q) {},
-        plot_all = function(Q = which.max(.self$ICL))
-        {
-            dev.new()
-            memberships[[Q]]$plot()
-            dev.new()
-            .self$plot_obs_pred(Q)
-            dev.new()
-            .self$plot_parameters(Q)
-        },
         show = function()
         {
             cat("blockmodels object\n")
@@ -607,6 +597,7 @@ setRefClass("model",
                 cat("            $ICL : vector of ICL\n")
                 cat("            $PL : vector of pseudo log liklihood\n")
                 cat("            $memberships : list of memberships founds by estimation\n")
+                cat("                           each membership is represented object\n")
                 cat("            $model_results : models parameters founds by estimation\n")
                 cat("        Estimation methods:\n")
                 cat("            $estimate(reinitalization_effort=1) : to run again estimation with a\n")
@@ -614,7 +605,7 @@ setRefClass("model",
                 cat("        Plotting methods:\n")
                 cat("            $plot_obs_pred(Q) : to plot the obeserved and predicted network for Q groups\n")
                 cat("            $plot_parameters(Q) : to plot the model_parameters for Q groups\n")
-                cat("            $plot_all(Q=which.max(ICL)) : to plot memberships, and two previous plots\n")
+                cat("            Please note that each membership object have a plotting pethod\n")
             }
             else
             {
