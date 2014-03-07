@@ -205,6 +205,7 @@ setRefClass("scalar_model",
                     }
                     
                 }
+                result <- result[!sapply(result,is.null)]
 
                 return(result)
             }
