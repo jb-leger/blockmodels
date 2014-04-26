@@ -43,7 +43,7 @@ result<membership_type,model_type> em(
 
     #ifdef DEBUG_EM
     std::cout << "M" << std::endl;
-    printf("J = %f\t H = %f\t PL = %f\n",res.H+res.PL,res.H,res.PL);
+    fprintf(stderr,"J = %f\t H = %f\t PL = %f\n",res.H+res.PL,res.H,res.PL);
     #endif
     
     if(real_EM)
@@ -68,7 +68,7 @@ result<membership_type,model_type> em(
             
             #ifdef DEBUG_EM
             std::cout << "M" << std::endl;
-            printf("J = %f\t H = %f\t PL = %f\n",res.H+res.PL,res.H,res.PL);
+            fprintf(stderr,"J = %f\t H = %f\t PL = %f\n",res.H+res.PL,res.H,res.PL);
             #endif
 
             J=res.H+res.PL;
@@ -76,7 +76,7 @@ result<membership_type,model_type> em(
         } while(J-old_J > TOL_EM);
         
         #ifdef DEBUG_EM
-        printf("EM finised\n");
+        fprintf(stderr,"EM finised\n");
         #endif
     }
 
