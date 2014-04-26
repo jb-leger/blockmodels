@@ -114,7 +114,7 @@ double m_step(membership_type & membership, model_type & model, network_type & n
         gradient.print("gradient:");
         #endif
 
-    } while( gain > TOL_M && bfgs_iteration_counter < BFGS_ITER_MAX);
+    } while( (gain > TOL_M || bfgs_iteration_counter < BFGS_ITER_MIN) && bfgs_iteration_counter < BFGS_ITER_MAX);
 
     return -value; /* value is the opposite of the pseudo likelihood */
 }
