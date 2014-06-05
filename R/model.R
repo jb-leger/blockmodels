@@ -16,7 +16,8 @@ setRefClass("model",
         digest_already_splitted = "list",
         digest_already_merged = "list",
 
-        memberships = "list",           # found memberships
+        exploration_factor = "numeric",
+        memberships = "list",           # found memberships,
         model_results = "list",         # found model parameters
         PL = "numeric",                 # Pseudo liklihood of found models
         H = "numeric",                  # Entropy of found models
@@ -57,6 +58,11 @@ setRefClass("model",
             if(length(autosave)==0)
             {
                 autosave<<-""
+            }
+
+            if(length(exploration_factor)==0)
+            {
+                exploration_factor <<- 1.5
             }
         },
         save_now = function()
@@ -170,7 +176,7 @@ setRefClass("model",
             Q <- Qmin
             Qmax <- length(ICL)
             ret<-FALSE
-            while(which.max(ICL)*1.5>length(ICL) || Q<Qmax || Q<Qmin+2)
+            while(which.max(ICL)*exploration_factor>length(ICL) || Q<Qmax || Q<Qmin+2)
             {
                 Q<-Q+1
 
