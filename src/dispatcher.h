@@ -18,6 +18,7 @@ using namespace arma;
 #include "models/poisson_covariates.h"
 #include "models/gaussian.h"
 #include "models/bernoulli_covariates.h"
+#include "models/gaussian_covariates.h"
 
 
 template<class membership_type, class model_type, class network_type, bool real_EM>
@@ -62,6 +63,10 @@ Rcpp::List dispatcher_model(membership_type & membership_init,
     
     if(model_name == "gaussian")
         return estim<membership_type, gaussian, gaussian::network, real_EM>(
+                membership_init, network_from_R);
+    
+    if(model_name == "gaussian_covariates")
+        return estim<membership_type, gaussian_covariates, gaussian_covariates::network, real_EM>(
                 membership_init, network_from_R);
 
 
