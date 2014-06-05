@@ -91,7 +91,7 @@ double m_step(membership_type & membership, model_type & model, network_type & n
             model_type model_added = copy_and_add(model,membership,a*direction);
             new_value = - PL(model_added,membership, net);
             #ifdef DEBUG_M
-            fprintf(stderr,"line search: a=%f value=%f\n",a,new_value);
+            fprintf(stderr,"line search: a=%f\tvalue=%f\told_value=%f\tobj=%f\n",a,new_value,value,value+.25*a*D_direction);
             #endif
         } while(new_value-value > .25 * a * D_direction && line_search_iteration_counter < LINE_SEARCH_ITER_MAX);
 
