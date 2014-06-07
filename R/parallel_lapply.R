@@ -12,9 +12,19 @@ parallel_lapply <- function(X,FUN,...,mc.cores,mc.set.seed=FALSE,mc.silent=TRUE,
     res <- vector("list", length(sx))
         names(res) <- names(X)
 
-    if(Sys.info()['sysname']=='Linux')
-    {
+    cores <- as.integer(mc.cores)
 
+    if(Sys.info()['sysname']=='Linux' && cores > 1)
+    {
+        do_parallel <- TRUE
+    }
+    else
+    {
+        do_parallel <- FALSE
+    }
+
+    if(do_parallel)
+    {
         cores <- as.integer(mc.cores)
 
         if(length(X)<cores)

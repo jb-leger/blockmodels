@@ -33,7 +33,9 @@ setRefClass("model",
         # profiling
         profiling = "numeric",
         profiling_active = "logical",
-        profiling_t = "numeric"
+        profiling_t = "numeric",
+
+        ncores = "numeric"
     ),
     methods = list(
         postinit = function()
@@ -75,6 +77,11 @@ setRefClass("model",
             if(length(explore_min)==0)
             {
                 explore_min <<- 4
+            }
+
+            if(length(ncores)==0)
+            {
+                ncores <<- detectCores()
             }
         },
         save_now = function()
@@ -333,7 +340,7 @@ setRefClass("model",
                 results<-parallel_lapply(
                     inits,
                     .self$do_one_estim,
-                    mc.cores=detectCores(),
+                    mc.cores=ncores,
                     verbose=(verbosity>4))
             
                 toc('estimation_run')
@@ -546,7 +553,7 @@ setRefClass("model",
                                         getRefClass(membership_name)(
                                                 from_cc=r$membership)$ICL_penalty())
                         },
-                        mc.cores=detectCores(),
+                        mc.cores=ncores,
                         verbose=(verbosity>4)
                     )
                 )
