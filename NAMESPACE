@@ -1,7 +1,6 @@
 useDynLib(blockmodels)
 
 export(BM_bernoulli)
-export(BM_bernoulli_covariates)
 export(BM_bernoulli_covariates_approx)
 export(BM_poisson)
 export(BM_poisson_covariates)
