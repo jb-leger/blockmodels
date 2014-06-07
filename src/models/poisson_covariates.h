@@ -423,8 +423,9 @@ poisson_covariates::poisson_covariates(LBM & membership, const vec & vectorized)
  * your brain.
  */
 
+template<class membership_type>
 inline
-double maximum_step_in_direction(poisson_covariates & model, vec & direction)
+double maximum_step_in_direction(membership_type & membership, poisson_covariates & model, poisson_covariates::network & net, vec & direction)
 {
     vec vlambda = (model.symmetric) ? 
                         vech(model.lambda)

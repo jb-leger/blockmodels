@@ -100,8 +100,9 @@ double grad_logf(naive_bernoulli & model, naive_bernoulli::network & net, unsign
     return 0;
 }
 
+template<class membership_type>
 inline
-double maximum_step_in_direction(naive_bernoulli & model, vec & direction)
+double maximum_step_in_direction(membership_type & membership, naive_bernoulli & model, naive_bernoulli::network & net, vec & direction)
 {
     vec v = model.to_vector();
 

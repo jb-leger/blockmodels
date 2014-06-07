@@ -634,8 +634,9 @@ gaussian_covariates::gaussian_covariates(LBM & membership, const vec & vectorize
  * your brain.
  */
 
+template<class membership_type>
 inline
-double maximum_step_in_direction(gaussian_covariates & model, vec & direction)
+double maximum_step_in_direction(membership_type & membership, gaussian_covariates & model, gaussian_covariates::network & net, vec & direction)
 {
     double ds2 = direction(direction.n_elem-1);
     if(ds2>=0)

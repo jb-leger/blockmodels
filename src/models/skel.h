@@ -428,10 +428,17 @@ class MODEL
  *
  * If you don't have any constraint on you parameter vector, return 1, else, use
  * your brain.
+ *
+ * You can specialize this template in three function for SBM, LBM, and SBM_sym
+ * if you need
  */
 
+// template<class membership_type>
 // inline
-// double maximum_step_in_direction(MODEL & model, vec & direction)
+// double maximum_step_in_direction(membership_type & membership,
+//                                  MODEL & model,
+//                                  MODEL::network & net,
+//                                  vec & direction)
 // {
 // }
 

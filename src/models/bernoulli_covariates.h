@@ -517,8 +517,9 @@ bernoulli_covariates::bernoulli_covariates(LBM & membership, const vec & vectori
  * your brain.
  */
 
+template<class membership_type>
 inline
-double maximum_step_in_direction(bernoulli_covariates & model, vec & direction)
+double maximum_step_in_direction(membership_type & membership, bernoulli_covariates & model, bernoulli_covariates::network & net, vec & direction)
 {
     return 1;
 }

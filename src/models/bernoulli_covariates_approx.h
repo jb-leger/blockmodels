@@ -647,8 +647,9 @@ bernoulli_covariates_approx::bernoulli_covariates_approx(LBM & membership, const
  * your brain.
  */
 
+template<class membership_type>
 inline
-double maximum_step_in_direction(bernoulli_covariates_approx & model, vec & direction)
+double maximum_step_in_direction(membership_type & membership, bernoulli_covariates_approx & model, bernoulli_covariates_approx::network & net, vec & direction)
 {
     return(1);
 }

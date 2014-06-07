@@ -86,7 +86,7 @@ double m_step(membership_type & membership, model_type & model, network_type & n
         direction.print("direction:");
         #endif
 
-        double a=1.99 * maximum_step_in_direction(model,direction);
+        double a=1.99 * maximum_step_in_direction(membership,model,net,direction);
         double new_value=0;
 
         unsigned int line_search_iteration_counter = 0;

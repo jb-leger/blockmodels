@@ -541,11 +541,6 @@ double m_step(LBM & membership,
  * your brain.
  */
 
-// inline
-// double maximum_step_in_direction(gaussian & model, vec & direction)
-// {
-// }
-
 
 
 
