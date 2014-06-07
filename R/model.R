@@ -17,6 +17,8 @@ setRefClass("model",
         digest_already_merged = "list",
 
         exploration_factor = "numeric",
+        explore_max = "numeric",
+        explore_min = "numeric",
         memberships = "list",           # found memberships,
         model_results = "list",         # found model parameters
         PL = "numeric",                 # Pseudo liklihood of found models
@@ -63,6 +65,16 @@ setRefClass("model",
             if(length(exploration_factor)==0)
             {
                 exploration_factor <<- 1.5
+            }
+
+            if(length(explore_max)==0)
+            {
+                explore_max <<- Inf
+            }
+
+            if(length(explore_min)==0)
+            {
+                explore_min <<- 4
             }
         },
         save_now = function()
@@ -165,18 +177,21 @@ setRefClass("model",
 
         estim_ascend = function(reinitialization_effort,changing_effort)
         {
+            
             if(membership_name=="LBM")
             {
-                Qmin <- 2
+                Q <- 2
             }
             else
             {
-                Qmin <- 1
+                Q <- 1
             }
-            Q <- Qmin
-            Qmax <- length(ICL)
+            
+            Q_without_ICL <- max(length(ICL),explore_min)
+            Q_stop <- explore_max
+
             ret<-FALSE
-            while(which.max(ICL)*exploration_factor>length(ICL) || Q<Qmax || Q<Qmin+2)
+            while(Q<Q_stop && (which.max(ICL)*exploration_factor>length(ICL) || Q<Q_without_ICL))
             {
                 Q<-Q+1
 
