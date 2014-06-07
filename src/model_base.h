@@ -104,3 +104,8 @@ model_type copy_and_add(model_type & model, membership_type & membership, vec to
     return model_type(membership,model.to_vector()+toadd);
 }
 
+template<class model_type>
+inline
+void print_model(model_type & model)
+{
+}

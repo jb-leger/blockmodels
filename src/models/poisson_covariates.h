@@ -146,20 +146,6 @@ class poisson_covariates
 /* models usefull function
  */
 
-inline
-mat compute_B(colvec & beta, cube & covariates)
-{
-    // B definied as \sum \beta_k C_{:,:,k}
-    mat B=zeros<mat>(covariates.n_rows,covariates.n_cols);
-
-    for(unsigned int k=0;k<covariates.n_slices;k++)
-    {
-        B+=beta(k)*covariates.slice(k);
-    }
-    return B;
-}
-
-
 
 
 template<>

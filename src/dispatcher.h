@@ -18,6 +18,7 @@ using namespace arma;
 #include "models/poisson_covariates.h"
 #include "models/gaussian.h"
 #include "models/bernoulli_covariates.h"
+#include "models/bernoulli_covariates_approx.h"
 #include "models/gaussian_covariates.h"
 
 
@@ -51,6 +52,10 @@ Rcpp::List dispatcher_model(membership_type & membership_init,
     
     if(model_name == "bernoulli_covariates")
         return estim<membership_type, bernoulli_covariates, bernoulli_covariates::network, real_EM>(
+                membership_init, network_from_R);
+    
+    if(model_name == "bernoulli_covariates_approx")
+        return estim<membership_type, bernoulli_covariates_approx, bernoulli_covariates_approx::network, real_EM>(
                 membership_init, network_from_R);
     
     if(model_name == "poisson")

@@ -6,20 +6,6 @@
  * any confusion
  */
 
-template<class T>
-inline
-T logit(T & x)
-{
-    return(log(x)-log(1-x));
-}
-
-template<class T>
-inline
-T sigmo(T & x)
-{
-    return(1/(1+exp(-x)));
-}
-
 class bernoulli_covariates
 {
     public:
@@ -632,7 +618,6 @@ vec grad_logf(bernoulli_covariates & model,
               unsigned int q,
               unsigned int l)
 {
-    fprintf(stderr,"\rgrad begin        ");
     if(q>l)
     {
         unsigned int p=q;
@@ -652,7 +637,7 @@ vec grad_logf(bernoulli_covariates & model,
 
     colvec yij = net.covariates.tube(i,j);
     double c = model.m(q,l)+vec((model.beta.t() * yij))(0);
-    double constante = net.adj(i,j)-sigmo<double>(c);
+    double constante = net.adj(i,j)-sigmo(c);
 
     vec out(model.n_parameters);
     for(unsigned p=0;p<m_n;p++)
@@ -664,7 +649,6 @@ vec grad_logf(bernoulli_covariates & model,
     }
 
     out.subvec(m_n,out.n_elem-1) = constante * yij;
-    fprintf(stderr,"\rgrad end                ");
 
     return out;
 }
@@ -730,5 +714,5 @@ double logf(bernoulli_covariates & model,
 {
     colvec yij = net.covariates.tube(i,j);
     double c = model.m(q,l)+vec((model.beta.t() * yij))(0);
-    return net.adj(i,j)*c + log(1-sigmo<double>(c));
+    return net.adj(i,j)*c + log(1-sigmo(c));
 }

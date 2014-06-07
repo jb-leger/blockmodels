@@ -79,3 +79,40 @@ mat unvech(const vec & v)
     return(M);
 }
 
+inline
+mat logit(mat & x)
+{
+    return(log(x)-log(1-x));
+}
+
+inline
+mat sigmo(mat & x)
+{
+    return(1/(1+exp(-x)));
+}
+
+inline
+double logit(double & x)
+{
+    return(log(x)-log(1-x));
+}
+
+inline
+double sigmo(double & x)
+{
+    return(1/(1+exp(-x)));
+}
+
+inline
+mat compute_B(colvec & beta, cube & covariates)
+{
+    // B definied as \sum \beta_k C_{:,:,k}
+    mat B=zeros<mat>(covariates.n_rows,covariates.n_cols);
+
+    for(unsigned int k=0;k<covariates.n_slices;k++)
+    {
+        B+=beta(k)*covariates.slice(k);
+    }
+    return B;
+}
+

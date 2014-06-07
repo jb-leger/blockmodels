@@ -71,6 +71,12 @@ double m_step(membership_type & membership, model_type & model, network_type & n
     {
         bfgs_iteration_counter++;
         vec direction = solve(pseudo_hessian, -gradient);
+        
+        #ifdef DEBUG_M
+        print_model(model);
+        pseudo_hessian.print("pseudo_hessian:");
+        #endif
+        
         double D_direction = mat(direction.t()*gradient)(0);
         
         if(D_direction>=0)
