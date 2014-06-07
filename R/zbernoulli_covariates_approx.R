@@ -20,6 +20,19 @@ BM_bernoulli_covariates_approx <- setRefClass("BM_bernoulli_covariates_approx",
                             ...)
             .self$postinit()
         },
+        postinit = function()
+        {
+            callSuper()
+
+            for(i in 1:length(covariates))
+            {
+                if(abs(mean(covariates[[i]]))>1e-6)
+                {
+                    stop(paste('The covariates matrix',i,'does not have zero mean.',
+                               'Caput vacuum est.'))
+                }
+            }
+        },
         plot_parameters = function(Q)
         {
             matrixplot(.self$plot_transform(model_results[[Q]]$m))
