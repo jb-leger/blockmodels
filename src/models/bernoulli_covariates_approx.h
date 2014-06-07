@@ -651,7 +651,26 @@ template<class membership_type>
 inline
 double maximum_step_in_direction(membership_type & membership, bernoulli_covariates_approx & model, bernoulli_covariates_approx::network & net, vec & direction)
 {
-    return(1);
+    vec dbeta = direction.subvec(direction.n_elem-model.beta.n_elem,direction.n_elem-1);
+    mat B = compute_B(model.beta, net.covariates);
+    mat dB = compute_B(dbeta, net.covariates);
+
+    double a=1;
+    for(unsigned int i=0;i<B.n_elem;i++)
+    {
+        double & b = B(i);
+        double &db = dB(i);
+        double am=1;
+
+        if(db>0)
+            am = (2-b)/db;
+        if(db<0)
+            am = (-2-b)/db;
+
+        if(am<a)
+            a=am;
+    }
+    return(a);
 }
 
 
