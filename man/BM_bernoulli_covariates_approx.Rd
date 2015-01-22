@@ -28,7 +28,7 @@ is supposed as not very high. In pratical usage this seems not be a problem.}
          ## generation of one SBM network         
          sigmo <- function(x){1/(1+exp(-x))}
          Z<-matrix(1,20,1)\%x\%diag(4)
-         Mg<-4*matrix(runif(16),4,4)-2
+         Mg<-8*matrix(runif(16),4,4)-4
          Y1 <- matrix(runif(80*80),80,80)-.5
          Y2 <- matrix(runif(80*80),80,80)-.5
          M_in_expectation<-sigmo(Z\%*\%Mg\%*\%t(Z) + .6*Y1-.4*Y2)
@@ -47,7 +47,7 @@ is supposed as not very high. In pratical usage this seems not be a problem.}
          ## generation of one SBM_sym network
          sigmo <- function(x){1/(1+exp(-x))}
          Z<-matrix(1,20,1)\%x\%diag(4)
-         Mg<-4*matrix(runif(16),4,4)-2
+         Mg<-8*matrix(runif(16),4,4)-4
          Mg[lower.tri(Mg)]<-t(Mg)[lower.tri(Mg)]
          Y1 <- matrix(runif(80*80),80,80)-.5
          Y2 <- matrix(runif(80*80),80,80)-.5
@@ -72,7 +72,7 @@ is supposed as not very high. In pratical usage this seems not be a problem.}
          sigmo <- function(x){1/(1+exp(-x))}
          Z1<-matrix(1,40,1)\%x\%diag(2)
          Z2<-matrix(1,50,1)\%x\%diag(4)
-         Mg<-4*matrix(runif(8),2,4)-2
+         Mg<-8*matrix(runif(8),2,4)-4
          Y1 <- 2*matrix(runif(40*2*50*4),40*2,50*4)-1
          Y2 <- 2*matrix(runif(40*2*50*4),40*2,50*4)-1
          M_in_expectation<-sigmo(Z1\%*\%Mg\%*\%t(Z2) + .6*Y1-.4*Y2)
