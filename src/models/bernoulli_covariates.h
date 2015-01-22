@@ -619,22 +619,24 @@ vec grad_logf(bernoulli_covariates & model,
               unsigned int q,
               unsigned int l)
 {
-    if(q>l)
-    {
-        unsigned int p=q;
-        q=l;
-        l=p;
-    }
-
     unsigned int m_n=(model.symmetric) ?
         model.m.n_rows*(model.m.n_rows+1)/2
         :
         model.m.n_elem;
 
-    unsigned int m_k=(model.symmetric) ?
-        (2*model.m.n_rows-1-q)*q/2+l
-        :
-        model.m.n_rows*l+q;
+    unsigned int m_k=model.m.n_rows*l+q;
+
+    if(model.symmetric)
+    {
+        if(q>l)
+        {
+            unsigned int p=q;
+            q=l;
+            l=p;
+        }
+        
+        m_k=(2*model.m.n_rows-1-q)*q/2+l;
+    }
 
     colvec yij = net.covariates.tube(i,j);
     double c = model.m(q,l)+vec((model.beta.t() * yij))(0);
