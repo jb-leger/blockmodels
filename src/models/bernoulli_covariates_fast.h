@@ -456,6 +456,12 @@ double PL(bernoulli_covariates_fast & model,
         power_BoT[t]=power_BoT[t-1] % power_BoT[1];
         power_moT[t]=power_moT[t-1] % power_moT[1];
     }
+
+    std::vector<mat> Z_power_BoT_Z(2*bcf_K+1);
+    for(unsigned int t=0;t<=2*bcf_K;t++)
+    {
+        Z_power_BoT_Z[t] = membership.Z.t() * power_BoT[t] * membership.Z;
+    }
     
     double value = 0;
     value += accu( (membership.Z.t() * net.adjDZ * membership.Z) % model.m );
@@ -468,7 +474,7 @@ double PL(bernoulli_covariates_fast & model,
         for(unsigned int t=0; t<=2*k; t++)
         {
             value += bcf[k][t] * accu(
-                    ( membership.Z.t() * power_BoT[2*k-t] * membership.Z )
+                    ( Z_power_BoT_Z[2*k-t] )
                     %
                     ( power_moT[t] )
                     );
@@ -769,6 +775,15 @@ vec grad(bernoulli_covariates_fast & model,
         power_moT[t]=power_moT[t-1] % power_moT[1];
     }
 
+    std::vector<mat> Z_power_BoT_Z(2*bcf_K+1);
+    std::vector<mat> Z_power_moT_Z(2*bcf_K+1);
+
+    for(unsigned int t=0; t<2*bcf_K;t++) // the last is never used
+    {
+        Z_power_BoT_Z[t]=membership.Z.t() * power_BoT[t] * membership.Z;
+        Z_power_moT_Z[t]=membership.Z * power_moT[t] * membership.Z.t();
+    }
+
     mat dm = membership.Z.t() * net.adjDZ * membership.Z;
 
     mat mask = (membership.Z * power_moT[0] * membership.Z.t() ) % net.adjDZ;
@@ -781,13 +796,13 @@ vec grad(bernoulli_covariates_fast & model,
                 (
                  power_moT[t-1] 
                  % 
-                 (membership.Z.t() * power_BoT[2*k-t] * membership.Z)
+                 (Z_power_BoT_Z[2*k-t])
                 );
             mask += bcf[k][t] * t / bcf_T *
                 (
                  power_BoT[t-1] 
                  % 
-                 (membership.Z * power_moT[2*k-t] * membership.Z.t())
+                 (Z_power_moT_Z[2*k-t])
                 );
         }
     }
