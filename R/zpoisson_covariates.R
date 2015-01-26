@@ -22,14 +22,14 @@ BM_poisson_covariates <- setRefClass("BM_poisson_covariates",
         plot_transform = function(x) {log(1+x)},
         plot_parameters = function(Q)
         {
-            matrixplot(.self$plot_transform(model_results[[Q]]$lambda))
+            matrixplot(.self$plot_transform(model_parameters[[Q]]$lambda))
         },
         prediction = function(Q)
         {
             B <- matrix(0,nrow(adj),ncol(adj))
             for(k in 1:length(covariates))
             {
-                B <- B + model_results[[Q]]$beta[k] * covariates[[k]]
+                B <- B + model_parameters[[Q]]$beta[k] * covariates[[k]]
             }
 
             if(membership_name=='LBM')
@@ -38,7 +38,7 @@ BM_poisson_covariates <- setRefClass("BM_poisson_covariates",
                     (
                         memberships[[Q]]$Z1
                         %*%
-                        model_results[[Q]]$lambda
+                        model_parameters[[Q]]$lambda
                         %*%
                         t(memberships[[Q]]$Z2)
                     ) * exp(B)
@@ -50,7 +50,7 @@ BM_poisson_covariates <- setRefClass("BM_poisson_covariates",
                     (
                         memberships[[Q]]$Z
                         %*%
-                        model_results[[Q]]$lambda
+                        model_parameters[[Q]]$lambda
                         %*%
                         t(memberships[[Q]]$Z)
                     ) * exp(B)

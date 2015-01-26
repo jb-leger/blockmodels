@@ -12,7 +12,7 @@ BM_bernoulli <- setRefClass("BM_bernoulli",
         },
         plot_parameters = function(Q)
         {
-            matrixplot(model_results[[Q]]$pi)
+            matrixplot(model_parameters[[Q]]$pi)
         },
         prediction = function(Q)
         {
@@ -21,7 +21,7 @@ BM_bernoulli <- setRefClass("BM_bernoulli",
                 return(
                     memberships[[Q]]$Z1
                      %*%
-                    model_results[[Q]]$pi
+                    model_parameters[[Q]]$pi
                      %*%
                     t(memberships[[Q]]$Z2)
                 )
@@ -31,7 +31,7 @@ BM_bernoulli <- setRefClass("BM_bernoulli",
                 return(
                     memberships[[Q]]$Z
                      %*%
-                    model_results[[Q]]$pi
+                    model_parameters[[Q]]$pi
                      %*%
                     t(memberships[[Q]]$Z)
                 )

@@ -35,14 +35,14 @@ BM_bernoulli_covariates_approx <- setRefClass("BM_bernoulli_covariates_approx",
         },
         plot_parameters = function(Q)
         {
-            matrixplot(.self$plot_transform(model_results[[Q]]$m))
+            matrixplot(.self$plot_transform(model_parameters[[Q]]$m))
         },
         prediction = function(Q)
         {
             B <- matrix(0,nrow(adj),ncol(adj))
             for(k in 1:length(covariates))
             {
-                B <- B + model_results[[Q]]$beta[k] * covariates[[k]]
+                B <- B + model_parameters[[Q]]$beta[k] * covariates[[k]]
             }
 
             if(membership_name=='LBM')
@@ -51,7 +51,7 @@ BM_bernoulli_covariates_approx <- setRefClass("BM_bernoulli_covariates_approx",
                     sigmo(
                         memberships[[Q]]$Z1
                         %*%
-                        model_results[[Q]]$m
+                        model_parameters[[Q]]$m
                         %*%
                         t(memberships[[Q]]$Z2)
                         + B
@@ -64,7 +64,7 @@ BM_bernoulli_covariates_approx <- setRefClass("BM_bernoulli_covariates_approx",
                     sigmo(
                         memberships[[Q]]$Z
                         %*%
-                        model_results[[Q]]$m
+                        model_parameters[[Q]]$m
                         %*%
                         t(memberships[[Q]]$Z)
                         + B

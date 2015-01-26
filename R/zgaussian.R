@@ -12,7 +12,7 @@ BM_gaussian <- setRefClass("BM_gaussian",
         },
         plot_parameters = function(Q)
         {
-            matrixplot(model_results[[Q]]$mu)
+            matrixplot(model_parameters[[Q]]$mu)
         },
         prediction = function(Q)
         {
@@ -21,7 +21,7 @@ BM_gaussian <- setRefClass("BM_gaussian",
                 return(
                     memberships[[Q]]$Z1
                      %*%
-                    model_results[[Q]]$mu
+                    model_parameters[[Q]]$mu
                      %*%
                     t(memberships[[Q]]$Z2)
                 )
@@ -31,7 +31,7 @@ BM_gaussian <- setRefClass("BM_gaussian",
                 return(
                     memberships[[Q]]$Z
                      %*%
-                    model_results[[Q]]$mu
+                    model_parameters[[Q]]$mu
                      %*%
                     t(memberships[[Q]]$Z)
                 )

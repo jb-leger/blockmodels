@@ -21,14 +21,14 @@ BM_gaussian_covariates <- setRefClass("BM_gaussian_covariates",
         },
         plot_parameters = function(Q)
         {
-            matrixplot(.self$plot_transform(model_results[[Q]]$mu))
+            matrixplot(.self$plot_transform(model_parameters[[Q]]$mu))
         },
         prediction = function(Q)
         {
             B <- matrix(0,nrow(adj),ncol(adj))
             for(k in 1:length(covariates))
             {
-                B <- B + model_results[[Q]]$beta[k] * covariates[[k]]
+                B <- B + model_parameters[[Q]]$beta[k] * covariates[[k]]
             }
 
             if(membership_name=='LBM')
@@ -37,7 +37,7 @@ BM_gaussian_covariates <- setRefClass("BM_gaussian_covariates",
                     (
                         memberships[[Q]]$Z1
                         %*%
-                        model_results[[Q]]$mu
+                        model_parameters[[Q]]$mu
                         %*%
                         t(memberships[[Q]]$Z2)
                     ) + B
@@ -49,7 +49,7 @@ BM_gaussian_covariates <- setRefClass("BM_gaussian_covariates",
                     (
                         memberships[[Q]]$Z
                         %*%
-                        model_results[[Q]]$mu
+                        model_parameters[[Q]]$mu
                         %*%
                         t(memberships[[Q]]$Z)
                     ) + B

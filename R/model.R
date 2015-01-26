@@ -20,7 +20,7 @@ setRefClass("model",
         explore_max = "numeric",
         explore_min = "numeric",
         memberships = "list",           # found memberships,
-        model_results = "list",         # found model parameters
+        model_parameters = "list",         # found model parameters
         PL = "numeric",                 # Pseudo liklihood of found models
         H = "numeric",                  # Entropy of found models
         ICL = "numeric",                # ICL of found models
@@ -420,7 +420,7 @@ setRefClass("model",
                         say(5,memberships[[Q]]$show_short())
                     }
 
-                    model_results[[Q]] <<- r$model
+                    model_parameters[[Q]] <<- r$model
                     PL[Q] <<- r$PL
                     H[Q] <<- r$H
                     ICL[Q] <<- r$PL - .5*(r$model$n_parameters *
@@ -626,7 +626,7 @@ setRefClass("model",
                 cat("            $PL : vector of pseudo log liklihood\n")
                 cat("            $memberships : list of memberships founds by estimation\n")
                 cat("                           each membership is represented object\n")
-                cat("            $model_results : models parameters founds by estimation\n")
+                cat("            $model_parameters : models parameters founds by estimation\n")
                 cat("        Estimation methods:\n")
                 cat("            $estimate(reinitalization_effort=1) : to run again estimation with a\n")
                 cat("                                                  higher reinitalization effort\n")
