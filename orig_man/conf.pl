@@ -4,6 +4,7 @@ our %config;
 $config{'MEMBERSHIP_ARG'} = "membership_type";
 $config{'MODEL_ARG'} = "verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores()";
 $config{'SCALAR_MODEL_ARG'} = "adj";
+$config{'MULTIVARIATE_MODEL_ARG'} = "adj";
 
 $config{'MEMBERSHIP_ARG_ITEM'} = 
     "\\item{membership_type}{The type of node membership, i.e. 'SBM', 'SBM_sym' or 'LBM'}";
@@ -20,6 +21,8 @@ $config{'MODEL_ARG_ITEM'} =
 $config{'SCALAR_MODEL_ARG_ITEM'} =
     "\\item{adj}{The adjacency matrix}";
 
+$config{'MULTIVARIATE_MODEL_ARG_ITEM'} = 
+    "\\item{adj}{The list of adjacency matrices. All matrices must have the same size}";
 
 $config{'COVARIATES_ARG'} = 'covariates';
 
