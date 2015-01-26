@@ -380,7 +380,7 @@ double PL(gaussian_covariates & model,
 {
     mat adjmBZD = fill_diag(net.adj-gaussian_covariates_compute_B(model.beta,net.covariates),0);
     return(
-            -.5*(membership.Z.n_rows * membership.Z.n_rows)*log(2*PI*model.sigma2)
+            -.5*(membership.Z.n_rows * (membership.Z.n_rows-1))*log(2*PI*model.sigma2)
             -1.0/(2*model.sigma2)*(
                 accu(
                     adjmBZD % adjmBZD
@@ -428,7 +428,7 @@ double PL(gaussian_covariates & model,
 {
     mat adjmBZD = fill_diag(net.adj-gaussian_covariates_compute_B(model.beta,net.covariates),0);
     return( .5*(
-            -.5*(membership.Z.n_rows * membership.Z.n_rows)*log(2*PI*model.sigma2)
+            -.5*(membership.Z.n_rows * (membership.Z.n_rows-1))*log(2*PI*model.sigma2)
             -1.0/(2*model.sigma2)*(
                 accu(
                     adjmBZD % adjmBZD
@@ -695,7 +695,7 @@ vec grad(gaussian_covariates & model,
     }
 
     double dsigma2 =
-            -.5*(membership.Z.n_rows * membership.Z.n_rows)/model.sigma2
+            -.5*(membership.Z.n_rows * (membership.Z.n_rows-1))/model.sigma2
             +1.0/(2*model.sigma2*model.sigma2)*(
                 accu(
                     adjmBZD % adjmBZD
@@ -770,7 +770,7 @@ vec grad(gaussian_covariates & model,
     }
 
     double dsigma2 =
-            -.5*(membership.Z.n_rows * membership.Z.n_rows)/model.sigma2
+            -.5*(membership.Z.n_rows * (membership.Z.n_rows-1))/model.sigma2
             +1.0/(2*model.sigma2*model.sigma2)*(
                 accu(
                     adjmBZD % adjmBZD
