@@ -116,3 +116,24 @@ mat compute_B(colvec & beta, cube & covariates)
     return B;
 }
 
+inline
+cube apply_matrix_on_tubes(mat & M, cube & C)
+{
+    // C2 is defined as
+    // \forall ij, C2.tube(i,j) = M*C.tube(i,j)
+    //
+    // we must have C.n_slices = M.n_cols
+    //
+    // This computation method is optimize when C.n_rows * C.n_cols >> M.n_rows * M.n_cols
+    //
+
+    cube C2(C.n_rows, C.n_cols, M.n_rows);
+
+    C2.zeros();
+
+    for(unsigned int k1=0; k1<M.n_rows; k1++)
+        for(unsigned int k2=0; k2<M.n_cols; k2++)
+            C2.slice(k1) += M(k1,k2) * C.slice(k2);
+
+    return(C2);
+}
