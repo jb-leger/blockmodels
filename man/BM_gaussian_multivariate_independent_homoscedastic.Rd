@@ -1,6 +1,6 @@
-\name{BM_gaussian_multivariate_independant_homoscedastic}
-\alias{BM_gaussian_multivariate_independant_homoscedastic}
-\title{Perform estimation on blockmodels for multivariate independant
+\name{BM_gaussian_multivariate_independent_homoscedastic}
+\alias{BM_gaussian_multivariate_independent_homoscedastic}
+\title{Perform estimation on blockmodels for multivariate independent
     homoscedastic gaussian probability distribution}
 \description{
     With the provided network and blockmodel type, estimate number of groups,
