@@ -17,6 +17,7 @@ using namespace arma;
 #include "models/poisson.h"
 #include "models/poisson_covariates.h"
 #include "models/gaussian.h"
+#include "models/gaussian_multivariate_independent.h"
 #include "models/gaussian_multivariate_independent_homoscedastic.h"
 #include "models/bernoulli_covariates.h"
 #include "models/bernoulli_covariates_approx.h"
@@ -74,6 +75,10 @@ Rcpp::List dispatcher_model(membership_type & membership_init,
     
     if(model_name == "gaussian")
         return estim<membership_type, gaussian, gaussian::network, real_EM>(
+                membership_init, network_from_R);
+    
+    if(model_name == "gaussian_multivariate_independent")
+        return estim<membership_type, gaussian_multivariate_independent, gaussian_multivariate_independent::network, real_EM>(
                 membership_init, network_from_R);
     
     if(model_name == "gaussian_multivariate_independent_homoscedastic")
