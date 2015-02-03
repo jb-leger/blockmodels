@@ -1,6 +1,11 @@
 
 our %config;
 
+$config{'SBM_NPC'} = '30';
+$config{'SBM_Q'} = '3';
+$config{'LBM_NPC'} = 'c(50,40)';
+$config{'LBM_Q'} = 'c(2,3)';
+
 $config{'MEMBERSHIP_ARG'} = "membership_type";
 $config{'MODEL_ARG'} = "verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores()";
 $config{'SCALAR_MODEL_ARG'} = "adj";

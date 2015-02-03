@@ -17,62 +17,61 @@ parameters and node membership}
 
 }
 \examples{
+npc <- 30 # nodes per class
+Q <- 3 # classes
+Z<-diag(Q)\%x\%matrix(1,npc,1)
+Mu1<-4*matrix(runif(Q*Q),Q,Q)
+Mu2<-4*matrix(runif(Q*Q),Q,Q)
+Noise1<-matrix(rnorm(npc*Q*npc*Q,sd=1),npc*Q,npc*Q)
+Noise2<-matrix(rnorm(npc*Q*npc*Q,sd=1),npc*Q,npc*Q)
+M1<- Z\%*\%Mu1\%*\%t(Z) + Noise1
+M2<- Z\%*\%Mu2\%*\%t(Z) + 10*Noise1 + Noise2
 
-    ##
-    ## SBM
-    ##
+## estimation
+my_model <- BM_gaussian_multivariate("SBM",list(M1,M2))
+my_model$estimate()
+which.max(my_model$ICL)
 
-    ## generation of one SBM network
-    Z<-diag(4)\%x\%matrix(1,40,1)
-    Mu1<-matrix(c(1,0,0,1),2,2)\%x\%matrix(1,2,2)
-    Mu2<-matrix(1,2,2)\%x\%matrix(c(1,0,0,1),2,2)
-    Noise1<-matrix(rnorm(160*160,sd=1),160,160)
-    Noise2<-matrix(rnorm(160*160,sd=1),160,160)
-    M1<- Z\%*\%Mu1\%*\%t(Z) + Noise1
-    M2<- Z\%*\%Mu2\%*\%t(Z) + 10*Noise1 + Noise2
+##
+## SBM symmetric
+##
 
-    ## estimation
-    my_model <- BM_gaussian_multivariate("SBM",list(M1,M2))
-    my_model$estimate()
-    which.max(my_model$ICL)
+## generation of one SBM_sym network
+npc <- 30 # nodes per class
+Q <- 3 # classes
+Z<-diag(Q)\%x\%matrix(1,npc,1)
+Mu1<-4*matrix(runif(Q*Q),Q,Q)
+Mu2<-4*matrix(runif(Q*Q),Q,Q)
+Noise1<-matrix(rnorm(npc*Q*npc*Q,sd=1),npc*Q,npc*Q)
+Noise2<-matrix(rnorm(npc*Q*npc*Q,sd=1),npc*Q,npc*Q)
+M1<- Z\%*\%Mu1\%*\%t(Z) + Noise1
+M2<- Z\%*\%Mu2\%*\%t(Z) + 10*Noise1 + Noise2
+M1[lower.tri(M1)]<-t(M1)[lower.tri(M1)]
+M2[lower.tri(M2)]<-t(M2)[lower.tri(M2)]
 
-    ##
-    ## SBM symmetric
-    ##
-    
-    ## generation of one SBM_sym network
-    Z<-diag(4)\%x\%matrix(1,40,1)
-    Mu1<-matrix(c(1,0,0,1),2,2)\%x\%matrix(1,2,2)
-    Mu2<-matrix(1,2,2)\%x\%matrix(c(1,0,0,1),2,2)
-    Noise1<-matrix(rnorm(160*160,sd=1),160,160)
-    Noise2<-matrix(rnorm(160*160,sd=1),160,160)
-    M1<- Z\%*\%Mu1\%*\%t(Z) + Noise1
-    M2<- Z\%*\%Mu2\%*\%t(Z) + 10*Noise1 + Noise2
-    M1[lower.tri(M1)]<-t(M1)[lower.tri(M1)]
-    M2[lower.tri(M2)]<-t(M2)[lower.tri(M2)]
+## estimation
+my_model <- BM_gaussian_multivariate("SBM_sym",list(M1,M2))
+my_model$estimate()
+which.max(my_model$ICL)
 
-    ## estimation
-    my_model <- BM_gaussian_multivariate("SBM_sym",list(M1,M2))
-    my_model$estimate()
-    which.max(my_model$ICL)
+##
+## LBM
+##
 
-    ##
-    ## LBM
-    ##
+## generation of one LBM network
+npc <- c(50,40) # nodes per class
+Q <- c(2,3) # classes
+Z1<-diag(Q[1])\%x\%matrix(1,npc[1],1)
+Z2<-diag(Q[2])\%x\%matrix(1,npc[2],1)
+Mu1<-4*matrix(runif(Q[1]*Q[2]),Q[1],Q[2])
+Mu2<-4*matrix(runif(Q[1]*Q[2]),Q[1],Q[2])
+Noise1<-matrix(rnorm(npc[1]*Q[1]*npc[2]*Q[2],sd=1),npc[1]*Q[1],npc[2]*Q[2])
+Noise2<-matrix(rnorm(npc[1]*Q[1]*npc[2]*Q[2],sd=1),npc[1]*Q[1],npc[2]*Q[2])
+M1<-Z1\%*\%Mu1\%*\%t(Z2) + Noise1 ## adjacency
+M2<-Z1\%*\%Mu2\%*\%t(Z2) + 10*Noise1 + Noise2 ## adjacency
 
-    ## generation of one LBM network
-    Z1<-diag(2)\%x\%matrix(1,60,1)
-    Z2<-diag(2)\%x\%matrix(1,120,1)
-    Mu1<-matrix(c(1,0,1,0),2,2)
-    Mu2<-matrix(c(1,1,0,0),2,2)
-    Noise1<-matrix(rnorm(120*240,sd=1),120,240)
-    Noise2<-matrix(rnorm(120*240,sd=1),120,240)
-    M1<-Z1\%*\%Mu1\%*\%t(Z2) + Noise1 ## adjacency
-    M2<-Z1\%*\%Mu2\%*\%t(Z2) + 10*Noise1 + Noise2 ## adjacency
-
-    ## estimation
-    my_model <- BM_gaussian_multivariate("LBM",list(M1,M2))
-    my_model$estimate()
-    which.max(my_model$ICL)
-    
+## estimation
+my_model <- BM_gaussian_multivariate("LBM",list(M1,M2))
+my_model$estimate()
+which.max(my_model$ICL)
 }
