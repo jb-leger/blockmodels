@@ -248,7 +248,7 @@ void e_fixed_step(SBM & membership,
 
     power_BoT[0] = net.MonesZ;
     power_moT[0] = ones<mat>(lZ.n_cols,lZ.n_cols);
-    power_BoT[1] = compute_B(model.beta, net.covariates)/bcf_T;
+    power_BoT[1] = fill_diag(compute_B(model.beta, net.covariates)/bcf_T,0);
     power_moT[1] = model.m/bcf_T;
     for(unsigned int t=2;t<=2*bcf_K;t++)
     {
@@ -295,7 +295,7 @@ void e_fixed_step(SBM_sym & membership,
 
     power_BoT[0] = net.MonesZ;
     power_moT[0] = ones<mat>(lZ.n_cols,lZ.n_cols);
-    power_BoT[1] = compute_B(model.beta, net.covariates)/bcf_T;
+    power_BoT[1] = fill_diag(compute_B(model.beta, net.covariates)/bcf_T,0);
     power_moT[1] = model.m/bcf_T;
     for(unsigned int t=2;t<=2*bcf_K;t++)
     {
@@ -461,7 +461,7 @@ double PL(bernoulli_covariates_fast & model,
 
     power_BoT[0] = net.MonesZ;
     power_moT[0] = ones<mat>(membership.Z.n_cols,membership.Z.n_cols);
-    power_BoT[1] = compute_B(model.beta, net.covariates)/bcf_T;
+    power_BoT[1] = fill_diag(compute_B(model.beta, net.covariates)/bcf_T,0);
     power_moT[1] = model.m/bcf_T;
     for(unsigned int t=2;t<=2*bcf_K;t++)
     {
@@ -523,7 +523,7 @@ double PL(bernoulli_covariates_fast & model,
 
     power_BoT[0] = net.MonesZ;
     power_moT[0] = ones<mat>(membership.Z.n_cols,membership.Z.n_cols);
-    power_BoT[1] = compute_B(model.beta, net.covariates)/bcf_T;
+    power_BoT[1] = fill_diag(compute_B(model.beta, net.covariates)/bcf_T,0);
     power_moT[1] = model.m/bcf_T;
     for(unsigned int t=2;t<=2*bcf_K;t++)
     {
@@ -792,7 +792,7 @@ vec grad(bernoulli_covariates_fast & model,
 
     power_BoT[0] = net.MonesZ;
     power_moT[0] = ones<mat>(membership.Z.n_cols,membership.Z.n_cols);
-    power_BoT[1] = compute_B(model.beta, net.covariates)/bcf_T;
+    power_BoT[1] = fill_diag(compute_B(model.beta, net.covariates)/bcf_T,0);
     power_moT[1] = model.m/bcf_T;
     for(unsigned int t=2;t<=2*bcf_K;t++)
     {
@@ -874,7 +874,7 @@ vec grad(bernoulli_covariates_fast & model,
 
     power_BoT[0] = net.MonesZ;
     power_moT[0] = ones<mat>(membership.Z.n_cols,membership.Z.n_cols);
-    power_BoT[1] = compute_B(model.beta, net.covariates)/bcf_T;
+    power_BoT[1] = fill_diag(compute_B(model.beta, net.covariates)/bcf_T,0);
     power_moT[1] = model.m/bcf_T;
     for(unsigned int t=2;t<=2*bcf_K;t++)
     {
