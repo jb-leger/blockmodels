@@ -26,7 +26,7 @@ parallel_lapply <- function(X,FUN,...,mc.cores,mc.set.seed=FALSE,mc.silent=TRUE,
 
     cores <- as.integer(mc.cores)
 
-    if(Sys.info()['sysname']=='Linux' && cores > 1)
+    if(.Platform$OS.type=="unix" && cores > 1)
     {
         do_parallel <- TRUE
     }
