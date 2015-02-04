@@ -29,10 +29,13 @@
    scalar_model_with_covarariates, multivariate_model, ... or model directly if you
    want.
 
-8. Write R documentation file.
+8. Write R documentation file and tests.
 
-   If you want to submit your model, example must be runnable.
-   You can write by hand your documentation file in man/ or write a
-   documentation file in orig_man using macros and run the script gen_man.
+   * write code in orig/code/your_model_name.R. Use variables as others.
+
+   * write man with macro in orig/man/your_model_name.Rd. Use variables as
+     others.
+
+   * run ./gen_mans_and_tests
 
 9. Set export of you model in NAMESPACE.
