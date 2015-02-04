@@ -1,6 +1,18 @@
-# parallel version of lapply, based on parallel package
+# parallel version of lapply, unsigng non exported function of parallel package
+# and compatible with the mclapply function of the parallel pachage, except the
+# verbose arg.
+#
+# The difference with mclapply is:
 # without prescedule
 # with display
+#
+# In case of change of parallel package internal API, this function can be
+# broken. A workaround is the following function (but we loose te display):
+# parallel_lapply <- function(..., verbose=TRUE) 
+# { 
+#     return(parallel::mclapply(...))
+# }
+#
 
 parallel_lapply <- function(X,FUN,...,mc.cores,mc.set.seed=FALSE,mc.silent=TRUE,verbose=TRUE)
 {
