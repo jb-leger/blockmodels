@@ -1,6 +1,0 @@
-#!/bin/bash
-
-for f in orig_man/*.Rd
-do
-    perl orig_man/gen_man.pl $(basename $f)
-done

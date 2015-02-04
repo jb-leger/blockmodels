@@ -16,7 +16,8 @@ parameters and node membership}
 \item{ncores}{Number of parallel jobs to launch different EM intializations. By default detectCores(). This parameter can be changed by accessing the field $ncores of the object. This parameters is used only on Linux. Parallism is disabled on other plateform. (Not working on Windows, not tested on Mac OS, not tested on *BSD.)}
 
 }
-\examples{
+\examples{\dontrun{
+
 ##
 ## SBM
 ##
@@ -29,7 +30,7 @@ Mu<-20*matrix(runif(Q*Q),Q,Q)
 M<-matrix(rnorm(npc*Q*npc*Q,sd=10),npc*Q,npc*Q)+Z\%*\%Mu\%*\%t(Z) ## adjacency matrix
 
 ## estimation
-my_model <- BM_gaussian("SBM",M)
+my_model <- BM_gaussian("SBM",M )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -47,7 +48,7 @@ M<-matrix(rnorm(npc*Q*npc*Q,sd=10),npc*Q,npc*Q)+Z\%*\%Mu\%*\%t(Z) ## adjacency m
 M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
 ## estimation
-my_model <- BM_gaussian("SBM_sym",M)
+my_model <- BM_gaussian("SBM_sym",M )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -64,7 +65,7 @@ Mu<-20*matrix(runif(Q[1]*Q[2]),Q[1],Q[2])
 M<-matrix(rnorm(npc[1]*Q[1]*npc[2]*Q[2],sd=10),npc[1]*Q[1],npc[2]*Q[2])+Z1\%*\%Mu\%*\%t(Z2) ## adjacency matrix
 
 ## estimation
-my_model <- BM_gaussian("LBM",M)
+my_model <- BM_gaussian("LBM",M )
 my_model$estimate()
 which.max(my_model$ICL)
-}
+}}

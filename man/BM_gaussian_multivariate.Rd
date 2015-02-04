@@ -16,7 +16,8 @@ parameters and node membership}
 \item{ncores}{Number of parallel jobs to launch different EM intializations. By default detectCores(). This parameter can be changed by accessing the field $ncores of the object. This parameters is used only on Linux. Parallism is disabled on other plateform. (Not working on Windows, not tested on Mac OS, not tested on *BSD.)}
 
 }
-\examples{
+\examples{\dontrun{
+
 npc <- 30 # nodes per class
 Q <- 3 # classes
 Z<-diag(Q)\%x\%matrix(1,npc,1)
@@ -28,7 +29,7 @@ M1<- Z\%*\%Mu1\%*\%t(Z) + Noise1
 M2<- Z\%*\%Mu2\%*\%t(Z) + 10*Noise1 + Noise2
 
 ## estimation
-my_model <- BM_gaussian_multivariate("SBM",list(M1,M2))
+my_model <- BM_gaussian_multivariate("SBM",list(M1,M2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -50,7 +51,7 @@ M1[lower.tri(M1)]<-t(M1)[lower.tri(M1)]
 M2[lower.tri(M2)]<-t(M2)[lower.tri(M2)]
 
 ## estimation
-my_model <- BM_gaussian_multivariate("SBM_sym",list(M1,M2))
+my_model <- BM_gaussian_multivariate("SBM_sym",list(M1,M2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -71,7 +72,7 @@ M1<-Z1\%*\%Mu1\%*\%t(Z2) + Noise1 ## adjacency
 M2<-Z1\%*\%Mu2\%*\%t(Z2) + 10*Noise1 + Noise2 ## adjacency
 
 ## estimation
-my_model <- BM_gaussian_multivariate("LBM",list(M1,M2))
+my_model <- BM_gaussian_multivariate("LBM",list(M1,M2) )
 my_model$estimate()
 which.max(my_model$ICL)
-}
+}}

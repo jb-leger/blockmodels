@@ -5,7 +5,7 @@
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership}
-\usage{BM_gaussian_multivariate_independant_homoscedastic(membership_type, adj, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
+\usage{BM_gaussian_multivariate_independent_homoscedastic(membership_type, adj, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
 \arguments{
     \item{membership_type}{The type of node membership, i.e. 'SBM', 'SBM_sym' or 'LBM'}
     \item{adj}{The list of adjacency matrices. All matrices must have the same size}
@@ -17,7 +17,8 @@ parameters and node membership}
 \item{ncores}{Number of parallel jobs to launch different EM intializations. By default detectCores(). This parameter can be changed by accessing the field $ncores of the object. This parameters is used only on Linux. Parallism is disabled on other plateform. (Not working on Windows, not tested on Mac OS, not tested on *BSD.)}
 
 }
-\examples{
+\examples{\dontrun{
+
 ##
 ## SBM
 ##
@@ -32,7 +33,7 @@ M1<-matrix(rnorm(npc*Q*npc*Q,sd=5),npc*Q,npc*Q)+Z\%*\%Mu1\%*\%t(Z) ## adjacency
 M2<-matrix(rnorm(npc*Q*npc*Q,sd=5),npc*Q,npc*Q)+Z\%*\%Mu2\%*\%t(Z) ## adjacency
 
 ## estimation
-my_model <- BM_gaussian_multivariate_independent_homoscedastic("SBM",list(M1,M2))
+my_model <- BM_gaussian_multivariate_independent_homoscedastic("SBM",list(M1,M2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -54,7 +55,7 @@ M1[lower.tri(M1)]<-t(M1)[lower.tri(M1)]
 M2[lower.tri(M2)]<-t(M2)[lower.tri(M2)]
 
 ## estimation
-my_model <- BM_gaussian_multivariate_independent_homoscedastic("SBM_sym",list(M1,M2))
+my_model <- BM_gaussian_multivariate_independent_homoscedastic("SBM_sym",list(M1,M2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -73,7 +74,7 @@ M1<-matrix(rnorm(npc[1]*Q[1]*npc[2]*Q[2],sd=5),npc[1]*Q[1],npc[2]*Q[2])+Z1\%*\%M
 M2<-matrix(rnorm(npc[1]*Q[1]*npc[2]*Q[2],sd=5),npc[1]*Q[1],npc[2]*Q[2])+Z1\%*\%Mu2\%*\%t(Z2) ## adjacency
 
 ## estimation
-my_model <- BM_gaussian_multivariate_independent_homoscedastic("LBM",list(M1,M2))
+my_model <- BM_gaussian_multivariate_independent_homoscedastic("LBM",list(M1,M2) )
 my_model$estimate()
 which.max(my_model$ICL)
-}
+}}

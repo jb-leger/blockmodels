@@ -18,7 +18,8 @@ parameters and node membership, and impact vector of covariates.}
 \item{ncores}{Number of parallel jobs to launch different EM intializations. By default detectCores(). This parameter can be changed by accessing the field $ncores of the object. This parameters is used only on Linux. Parallism is disabled on other plateform. (Not working on Windows, not tested on Mac OS, not tested on *BSD.)}
 
 }
-\examples{
+\examples{\dontrun{
+
 ##
 ## SBM
 ##
@@ -35,7 +36,7 @@ M_in_expectation<-sigmo(Z\%*\%Mg\%*\%t(Z) + 5*Y1-3*Y2)
 M<-1*(matrix(runif(npc*Q*npc*Q),npc*Q,npc*Q)<M_in_expectation)
 
 ## estimation
-my_model <- BM_bernoulli_covariates_fast("SBM",M,list(Y1,Y2))
+my_model <- BM_bernoulli_covariates_fast("SBM",M,list(Y1,Y2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -60,7 +61,7 @@ M<-1*(matrix(runif(npc*Q*npc*Q),npc*Q,npc*Q)<M_in_expectation)
 M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
 ## estimation
-my_model <- BM_bernoulli_covariates_fast("SBM_sym",M,list(Y1,Y2))
+my_model <- BM_bernoulli_covariates_fast("SBM_sym",M,list(Y1,Y2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -83,7 +84,7 @@ M_in_expectation<-sigmo(Z1\%*\%Mg\%*\%t(Z2) + 5*Y1-3*Y2)
 M<-1*(matrix(runif(npc[1]*Q[1]*npc[2]*Q[2]),npc[1]*Q[1],npc[2]*Q[2])<M_in_expectation)
 
 ## estimation
-my_model <- BM_bernoulli_covariates_fast("LBM",M,list(Y1,Y2))
+my_model <- BM_bernoulli_covariates_fast("LBM",M,list(Y1,Y2) )
 my_model$estimate()
 which.max(my_model$ICL)
-}
+}}

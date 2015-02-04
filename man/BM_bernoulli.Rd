@@ -16,7 +16,7 @@ parameters and node membership}
 \item{ncores}{Number of parallel jobs to launch different EM intializations. By default detectCores(). This parameter can be changed by accessing the field $ncores of the object. This parameters is used only on Linux. Parallism is disabled on other plateform. (Not working on Windows, not tested on Mac OS, not tested on *BSD.)}
 
 }
-\examples{
+\examples{\dontrun{
 
 ##
 ## SBM
@@ -30,7 +30,7 @@ P<-matrix(runif(Q*Q),Q,Q)
 M<-1*(matrix(runif(npc*Q*npc*Q),npc*Q,npc*Q)<Z\%*\%P\%*\%t(Z)) ## adjacency matrix
 
 ## estimation
-my_model <- BM_bernoulli("SBM",M)
+my_model <- BM_bernoulli("SBM",M )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -48,7 +48,7 @@ M<-1*(matrix(runif(npc*Q*npc*Q),npc*Q,npc*Q)<Z\%*\%P\%*\%t(Z)) ## adjacency matr
 M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
 ## estimation
-my_model <- BM_bernoulli("SBM_sym",M)
+my_model <- BM_bernoulli("SBM_sym",M )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -65,8 +65,7 @@ P<-matrix(runif(Q[1]*Q[2]),Q[1],Q[2])
 M<-1*(matrix(runif(npc[1]*Q[1]*npc[2]*Q[2]),npc[1]*Q[1],npc[2]*Q[2])<Z1\%*\%P\%*\%t(Z2)) ## adjacency matrix
 
 ## estimation
-my_model <- BM_bernoulli("LBM",M)
+my_model <- BM_bernoulli("LBM",M )
 my_model$estimate()
 which.max(my_model$ICL)
-
-}
+}}

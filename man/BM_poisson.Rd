@@ -16,7 +16,8 @@ parameters and node membership}
 \item{ncores}{Number of parallel jobs to launch different EM intializations. By default detectCores(). This parameter can be changed by accessing the field $ncores of the object. This parameters is used only on Linux. Parallism is disabled on other plateform. (Not working on Windows, not tested on Mac OS, not tested on *BSD.)}
 
 }
-\examples{
+\examples{\dontrun{
+
 #
 # SBM
 #
@@ -34,7 +35,7 @@ M<-matrix(
     ,npc*Q,npc*Q)
 
 ## estimation
-my_model <- BM_poisson("SBM",M)
+my_model <- BM_poisson("SBM",M )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -57,7 +58,7 @@ M<-matrix(
 M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
 ## estimation
-my_model <- BM_poisson("SBM_sym",M)
+my_model <- BM_poisson("SBM_sym",M )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -79,7 +80,7 @@ M<-matrix(
     ,npc[1]*Q[1],npc[2]*Q[2])
 
 ## estimation
-my_model <- BM_poisson("LBM",M)
+my_model <- BM_poisson("LBM",M )
 my_model$estimate()
 which.max(my_model$ICL)
-}
+}}

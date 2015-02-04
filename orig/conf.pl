@@ -1,10 +1,23 @@
 
 our %config;
 
-$config{'SBM_NPC'} = '30';
-$config{'SBM_Q'} = '3';
-$config{'LBM_NPC'} = 'c(50,40)';
-$config{'LBM_Q'} = 'c(2,3)';
+if($example==1)
+{
+    $config{'SBM_NPC'} = '30';
+    $config{'SBM_Q'} = '3';
+    $config{'LBM_NPC'} = 'c(50,40)';
+    $config{'LBM_Q'} = 'c(2,3)';
+    $config{'EXAMPLE_TEST_ARGS'}='';
+}
+else
+{
+    $config{'SBM_NPC'} = '10';
+    $config{'SBM_Q'} = '2';
+    $config{'LBM_NPC'} = 'c(20,10)';
+    $config{'LBM_Q'} = 'c(1,2)';
+    $config{'EXAMPLE_TEST_ARGS'} = ", plotting='', explore_min=2, explore_max=2, ncores=2, verbosity=0";
+}
+
 
 $config{'MEMBERSHIP_ARG'} = "membership_type";
 $config{'MODEL_ARG'} = "verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores()";

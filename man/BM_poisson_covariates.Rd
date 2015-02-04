@@ -1,11 +1,11 @@
 \name{BM_poisson_covariates}
-\alias{BM_poisson_covariates}
+\alias{\S4method{new}{BM_poisson_covariates}}
 \title{Perform estimation on blockmodels for poisson probability distribution
 aith covariates}
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership, and impact vector of covariates}
-\usage{BM_poisson_covariates(membership_type, adj, covariates, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
+\usage{\S4method{new}{BM_poisson_covariates}(membership_type, adj, covariates, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
 \arguments{
     \item{membership_type}{The type of node membership, i.e. 'SBM', 'SBM_sym' or 'LBM'}
     \item{adj}{The adjacency matrix}
@@ -18,7 +18,8 @@ parameters and node membership, and impact vector of covariates}
 \item{ncores}{Number of parallel jobs to launch different EM intializations. By default detectCores(). This parameter can be changed by accessing the field $ncores of the object. This parameters is used only on Linux. Parallism is disabled on other plateform. (Not working on Windows, not tested on Mac OS, not tested on *BSD.)}
 
 }
-\examples{
+\examples{\dontrun{
+
 ##
 ## SBM
 ##
@@ -39,7 +40,7 @@ M<-matrix(
     ,npc*Q,npc*Q)
 
 ## estimation
-my_model <- BM_poisson_covariates("SBM",M,list(Y1,Y2))
+my_model <- BM_poisson_covariates("SBM",M,list(Y1,Y2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -67,7 +68,7 @@ M<-matrix(
 M[lower.tri(M)]<-t(M)[lower.tri(M)]
 
 ## estimation
-my_model <- BM_poisson_covariates("SBM_sym",M,list(Y1,Y2))
+my_model <- BM_poisson_covariates("SBM_sym",M,list(Y1,Y2) )
 my_model$estimate()
 which.max(my_model$ICL)
 
@@ -92,7 +93,7 @@ M<-matrix(
     ,npc[1]*Q[1],npc[2]*Q[2])
 
 ## estimation
-my_model <- BM_poisson_covariates("LBM",M,list(Y1,Y2))
+my_model <- BM_poisson_covariates("LBM",M,list(Y1,Y2) )
 my_model$estimate()
 which.max(my_model$ICL)
-}
+}}
