@@ -5,7 +5,7 @@ with covariates}
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership and impact vector of covariates}
-\usage{BM_gaussian(membership_type, adj, covariates, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
+\usage{BM_gaussian_covariates(membership_type, adj, covariates, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
 \arguments{
     \item{membership_type}{The type of node membership, i.e. 'SBM', 'SBM_sym' or 'LBM'}
     \item{adj}{The adjacency matrix}

@@ -5,7 +5,7 @@ with covariates}
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership and impact vector of covariates}
-\usage{BM_gaussian(MEMBERSHIP_ARG, SCALAR_MODEL_ARG, COVARIATES_ARG, MODEL_ARG)}
+\usage{BM_gaussian_covariates(MEMBERSHIP_ARG, SCALAR_MODEL_ARG, COVARIATES_ARG, MODEL_ARG)}
 \arguments{
     MEMBERSHIP_ARG_ITEM
     SCALAR_MODEL_ARG_ITEM

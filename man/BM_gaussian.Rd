@@ -61,7 +61,7 @@ Q <- c(2,3) # classes
 Z1<-diag(Q[1])\%x\%matrix(1,npc[1],1)
 Z2<-diag(Q[2])\%x\%matrix(1,npc[2],1)
 Mu<-20*matrix(runif(Q[1]*Q[2]),Q[1],Q[2])
-M<-matrix(rnorm(npc[1]*Q[1]*npc[2]*Q[2],sd=20),npc[1]*Q[1],npc[2]*Q[2])+Z1\%*\%Mu\%*\%t(Z2) ## adjacency matrix
+M<-matrix(rnorm(npc[1]*Q[1]*npc[2]*Q[2],sd=10),npc[1]*Q[1],npc[2]*Q[2])+Z1\%*\%Mu\%*\%t(Z2) ## adjacency matrix
 
 ## estimation
 my_model <- BM_gaussian("LBM",M)
