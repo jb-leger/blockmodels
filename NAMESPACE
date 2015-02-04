@@ -1,5 +1,11 @@
 useDynLib(blockmodels)
 
+import(Rcpp)
+import(RcppArmadillo)
+import(digest)
+import(parallel)
+import(methods)
+
 export(BM_bernoulli)
 export(BM_bernoulli_covariates)
 export(BM_bernoulli_covariates_fast)

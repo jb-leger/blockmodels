@@ -1,4 +1,5 @@
 \name{BM_poisson_covariates}
+\alias{BM_poisson_covariates}
 \alias{\S4method{new}{BM_poisson_covariates}}
 \title{Perform estimation on blockmodels for poisson probability distribution
 aith covariates}
