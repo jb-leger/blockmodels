@@ -1,11 +1,20 @@
 \name{BM_gaussian_multivariate}
 \alias{BM_gaussian_multivariate}
-\alias{\S4method{new}{BM_gaussian_multivariate}}
+\alias{\S4method{BM_gaussian_multivariate}{new}}
 \title{Perform estimation on blockmodels for multivariate gaussian probability distribution}
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership}
-\usage{\S4method{new}{BM_gaussian_multivariate}(membership_type, adj, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
+\usage{\S4method{BM_gaussian_multivariate}{new}(
+    membership_type, 
+    adj, 
+    verbosity=6,
+    autosave='',
+    plotting=character(0),
+    exploration_factor=1.5,
+    explore_min=4,
+    explore_max=Inf,
+    ncores=detectCores())}
 \arguments{
     \item{membership_type}{The type of node membership, i.e. 'SBM', 'SBM_sym' or 'LBM'}
     \item{adj}{The list of adjacency matrices. All matrices must have the same size}

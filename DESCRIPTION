@@ -6,8 +6,8 @@ Date: 2015-02-03
 Author: INRA, Jean-Benoist Leger <jbleger@bordeaux.inra.fr>
 Maintainer: Jean-Benoist Leger <jbleger@bordeaux.inra.fr>
 Description: Latent and Stochastic Block Model estimation by a V-EM algorithm
-             Various probability distrution are provided (bernoulli,
-             poisson...), with or without covariates.
+             Various probability distribution are provided (Bernoulli,
+             Poisson...), with or without covariates.
 License: LGPL-2.1
-Depends: Rcpp (>= 0.10.6), RcppArmadillo (>= 0.3.920.1), parallel, methods, digest
+Depends: Rcpp (>= 0.10.6), parallel, methods, digest
 LinkingTo: Rcpp, RcppArmadillo

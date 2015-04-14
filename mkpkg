@@ -1,0 +1,18 @@
+#!/bin/bash
+
+d=$(mktemp -d /tmp/XXXXXXX)
+
+o=$(pwd)
+
+./gen_mans_and_tests
+
+cp -r . $d/blockmodels
+cd $d
+
+rm -rf $d/blockmodels/{.git,HOWTO_WRITE_A_MODEL,gen_mans_and_tests,orig,mkpkg}
+
+R CMD build blockmodels
+
+mv *.tar.gz $o/../
+
+rm -rf $d

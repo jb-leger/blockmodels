@@ -1,12 +1,22 @@
 \name{BM_bernoulli_covariates_fast}
 \alias{BM_bernoulli_covariates_fast}
-\alias{\S4method{new}{BM_bernoulli_covariates_fast}}
+\alias{\S4method{BM_bernoulli_covariates_fast}{new}}
 \title{Perform estimation on blockmodels for bernoulli probability distribution
 aith covariates}
 \description{
     With the provided network and blockmodel type, estimate number of groups,
 parameters and node membership, and impact vector of covariates.}
-\usage{\S4method{new}{BM_bernoulli_covariates_fast}(membership_type, adj, covariates, verbosity=6, autosave='', plotting=character(0), exploration_factor=1.5, explore_min=4, explore_max=Inf, ncores=detectCores())}
+\usage{\S4method{BM_bernoulli_covariates_fast}{new}(
+    membership_type,
+    adj,
+    covariates,
+    verbosity=6,
+    autosave='',
+    plotting=character(0),
+    exploration_factor=1.5,
+    explore_min=4,
+    explore_max=Inf,
+    ncores=detectCores())}
 \arguments{
     \item{membership_type}{The type of node membership, i.e. 'SBM', 'SBM_sym' or 'LBM'}
     \item{adj}{The adjacency matrix}

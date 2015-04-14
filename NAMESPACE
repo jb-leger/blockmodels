@@ -1,7 +1,6 @@
 useDynLib(blockmodels)
 
 import(Rcpp)
-import(RcppArmadillo)
 import(digest)
 import(parallel)
 import(methods)
