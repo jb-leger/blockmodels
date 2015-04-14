@@ -1,5 +1,5 @@
-# parallel version of lapply, unsigng non exported function of parallel package
-# and compatible with the mclapply function of the parallel pachage, except the
+# parallel version of lapply, using non exported function of parallel package
+# and compatible with the mclapply function of the parallel package, except the
 # verbose arg.
 #
 # The difference with mclapply is:
