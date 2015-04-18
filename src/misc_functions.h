@@ -34,7 +34,7 @@ void accu_log_fact(mat & M, double & with_diag, double & without_diag)
         {
             double v=0;
             for(unsigned int k=2; k<=M(i,j); k++)
-                v+=log(k);
+                v+=log(static_cast<double>(k));
             with_diag+=v;
             if(i==j)
                 diag+=v;
@@ -64,7 +64,7 @@ vec vech(const mat & M)
 inline 
 mat unvech(const vec & v)
 {
-    unsigned int n=((sqrt(1+8*v.n_elem)+1)-1)/2;
+    unsigned int n= (((sqrt(1.0+8*v.n_elem)+1)-1.0)/2 +.5);
     mat M(n,n);
     
     unsigned int k=0;
