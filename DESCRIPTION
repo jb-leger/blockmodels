@@ -1,8 +1,9 @@
 Package: blockmodels
 Type: Package
-Title: Latent and Stochastic Block Model estimation by a V-EM algorithm
-Version: 1.0.3
-Date: 2015-04-14
+Title: Latent and Stochastic Block Model Estimation by a 'V-EM'
+        Algorithm
+Version: 1.0.4
+Date: 2015-04-15
 Author: INRA, Jean-Benoist Leger <jbleger@bordeaux.inra.fr>
 Maintainer: Jean-Benoist Leger <jbleger@bordeaux.inra.fr>
 Description: Latent and Stochastic Block Model estimation by a V-EM algorithm

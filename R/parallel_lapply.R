@@ -1,18 +1,4 @@
-# parallel version of lapply, using non exported function of parallel package
-# and compatible with the mclapply function of the parallel package, except the
-# verbose arg.
-#
-# The difference with mclapply is:
-# without prescedule
-# with display
-#
-# In case of change of parallel package internal API, this function can be
-# broken. A workaround is the following function (but we loose te display):
-# parallel_lapply <- function(..., verbose=TRUE) 
-# { 
-#     return(parallel::mclapply(...))
-# }
-#
+# parallel version of lapply, using parallel::mclapply. We loose verbosity.
 
 parallel_lapply <- function(X,FUN,...,mc.cores,mc.set.seed=FALSE,mc.silent=TRUE,verbose=TRUE)
 {
@@ -37,82 +23,19 @@ parallel_lapply <- function(X,FUN,...,mc.cores,mc.set.seed=FALSE,mc.silent=TRUE,
 
     if(do_parallel)
     {
-        cores <- as.integer(mc.cores)
-
-        if(length(X)<cores)
-            cores <- length(X)
-
-
-        ent <- rep(FALSE, length(X))
-        fin <- rep(FALSE, length(X))
-        jobid <- seq_len(cores)
-        jobs <- lapply(jobid, function(i) mcparallel(FUN(X[[i]],...), mc.set.seed = mc.set.seed, silent = mc.silent))
-        jobsp <- parallel:::processID(jobs)
-        ent[jobid] <- TRUE
-        has.errors <- 0L
-        while (!all(fin)) {
-            s <- parallel:::selectChildren(jobs, 0.5)
-            if (is.null(s)) 
-                break
-            if (is.integer(s)) 
-                for (ch in s) {
-                    ji <- which(jobsp == ch)[1]
-                    ci <- jobid[ji]
-                    r <- parallel:::readChild(ch)
-                    if (is.raw(r)) {
-                        child.res <- unserialize(r)
-                        if (inherits(child.res, "try-error")) 
-                            has.errors <- has.errors + 1L
-                        if (!is.null(child.res)) 
-                            res[[ci]] <- child.res
-                    }
-                    else {
-                        fin[ci] <- TRUE
-                        if (!all(ent)) {
-                            nexti <- which(!ent)[1]
-                            jobid[ji] <- nexti
-                            jobs[[ji]] <- mcparallel(FUN(X[[nexti]], 
-                                                         ...), mc.set.seed = mc.set.seed, silent = mc.silent)
-                            jobsp[ji] <- parallel:::processID(jobs[[ji]])
-                            ent[nexti] <- TRUE
-                        }
-                    }
-                }
-
-            if(verbose)
-            {
-                cat("\r")
-                for(theta in 1:last_disp)
-                {
-                    cat(" ")
-                }
-                nb_jobs_done <- sum(fin)
-                nb_jobs_running <- min(cores, length(X)-nb_jobs_done)
-                nb_jobs_pending <- length(X)-nb_jobs_running-nb_jobs_done
-                cat("\r")
-                message <- paste(
-                    "Parallel jobs:",
-                    nb_jobs_done,
-                    "done,",
-                    nb_jobs_running,
-                    "running,",
-                    nb_jobs_pending,
-                    "pending "
-                )
-                last_disp <- nchar(message)
-                cat(message)
-            }
-
-        }
-
-        if (has.errors)
+        if(verbose)
         {
-            if(verbose)
-                cat("\n")
-            warning(gettextf("%d function calls resulted in an error", 
-                             has.errors), domain = NA)
+            cat("\r")
+            message <- paste(
+                'Executing ',
+                length(sx),
+                ' jobs in parallel',
+                    sep=''
+                )
+            last_disp <- nchar(message)
+            cat(message)
         }
-        
+        res <- parallel::mclapply(X,FUN,...,mc.cores=mc.cores,mc.set.seed=FALSE,mc.silent=TRUE)
     }
     else
     {
