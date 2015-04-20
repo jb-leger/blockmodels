@@ -64,7 +64,7 @@ vec vech(const mat & M)
 inline 
 mat unvech(const vec & v)
 {
-    unsigned int n= (((sqrt(1.0+8*v.n_elem)+1)-1.0)/2 +.5);
+    unsigned int n= (((sqrt(1.0+8*v.n_elem)+1)-1.0)/2);
     mat M(n,n);
     
     unsigned int k=0;
