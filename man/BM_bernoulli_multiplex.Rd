@@ -37,9 +37,6 @@ npc <- 30 # nodes per class
 Q <- 3 # classes
 n <- npc * Q # nodes
 Z<-diag(Q)\%x\%matrix(1,npc,1)
-Q <- 3 # classes
-n <- npc * Q # nodes
-Z<-diag(Q)\%x\%matrix(1,npc,1)
 P00<-matrix(runif(Q*Q),Q,Q)
 P10<-matrix(runif(Q*Q),Q,Q)
 P01<-matrix(runif(Q*Q),Q,Q)
@@ -65,9 +62,6 @@ which.max(my_model$ICL)
 
 ## generation of one SBM network
 npc <- 30 # nodes per class
-Q <- 3 # classes
-n <- npc * Q # nodes
-Z<-diag(Q)\%x\%matrix(1,npc,1)
 Q <- 3 # classes
 n <- npc * Q # nodes
 Z<-diag(Q)\%x\%matrix(1,npc,1)
