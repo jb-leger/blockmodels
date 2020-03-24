@@ -84,11 +84,13 @@ setRefClass("LBM",
         {
             (dim(Z1)[2]-1)*log(dim(Z1)[1]) + (dim(Z2)[2]-1)*log(dim(Z2)[1])
         },
-        merges = function()
+        merges = function(merge1, merge2)
         {
             result <- list()
             Q1 <- dim(Z1)[2]
-            if(Q1>1)
+            Q2 <- dim(Z2)[2]
+
+            if(Q1>1 && merge1)
             {
                 for(k1 in 1:(Q1-1))
                 {
@@ -101,8 +103,7 @@ setRefClass("LBM",
                 }
             }
             
-            Q2 <- dim(Z2)[2]
-            if(Q2>1)
+            if(Q2>1 && merge2)
             {
                 for(k1 in 1:(Q2-1))
                 {

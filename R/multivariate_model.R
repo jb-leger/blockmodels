@@ -101,49 +101,74 @@ setRefClass("multivariate_model",
                 Q1<-dim(membership$Z1)[2]
                 Q2<-dim(membership$Z2)[2]
 
-                result <- list()
-                for(q in 1:Q1)
+                split1 <- TRUE
+                split2 <- TRUE
+                if(length(exploration_direction)!=0)
                 {
-                    allcordsbind <- cbind(error[[1]])
-                    if(length(adj)>1)
+                    if(Q1<exploration_direction[1] || Q2<exploration_direction[2])
                     {
-                        for(k in 2:length(adj))
+                        if(Q1/exploration_direction[1] < Q2/exploration_direction[2])
                         {
-                            allcordsbind <- cbind(allcordsbind, error[[k]])
+                            split1 <- TRUE
+                            split2 <- FALSE
+                        }
+                        else
+                        {
+                            split1 <- FALSE
+                            split2 <- TRUE
                         }
                     }
-                    sub_classif <- coordinates_split(
-                        allcordsbind,
-                        membership$Z1[,q]
-                        )
-                    Z1 <- cbind(membership$Z1,membership$Z1[,q])
-                    Z1[,q] <- Z1[,q]*sub_classif
-                    Z1[,Q1+1] <- Z1[,Q1+1]*(1-sub_classif)
-                    result <- c(result, list(
-                            getRefClass(membership_name)(from_cc=list(Z1=Z1,Z2=membership$Z2))
-                        ))
                 }
 
-                for(q in 1:Q2)
+                result <- list()
+                if(split1)
                 {
-                    allcordsbind <- cbind(t(error[[1]]))
-                    if(length(adj)>1)
+                    for(q in 1:Q1)
                     {
-                        for(k in 2:length(adj))
+                        allcordsbind <- cbind(error[[1]])
+                        if(length(adj)>1)
                         {
-                            allcordsbind <- cbind(allcordsbind, t(error[[k]]))
+                            for(k in 2:length(adj))
+                            {
+                                allcordsbind <- cbind(allcordsbind, error[[k]])
+                            }
                         }
+                        sub_classif <- coordinates_split(
+                            allcordsbind,
+                            membership$Z1[,q]
+                            )
+                        Z1 <- cbind(membership$Z1,membership$Z1[,q])
+                        Z1[,q] <- Z1[,q]*sub_classif
+                        Z1[,Q1+1] <- Z1[,Q1+1]*(1-sub_classif)
+                        result <- c(result, list(
+                                getRefClass(membership_name)(from_cc=list(Z1=Z1,Z2=membership$Z2))
+                            ))
                     }
-                    sub_classif <- coordinates_split(
-                        allcordsbind,
-                        membership$Z2[,q]
-                        )
-                    Z2 <- cbind(membership$Z2,membership$Z2[,q])
-                    Z2[,q] <- Z2[,q]*sub_classif
-                    Z2[,Q2+1] <- Z2[,Q2+1]*(1-sub_classif)
-                    result <- c(result, list(
-                            getRefClass(membership_name)(from_cc=list(Z1=membership$Z1,Z2=Z2))
-                        ))
+                }
+
+                if(split2)
+                {
+                    for(q in 1:Q2)
+                    {
+                        allcordsbind <- cbind(t(error[[1]]))
+                        if(length(adj)>1)
+                        {
+                            for(k in 2:length(adj))
+                            {
+                                allcordsbind <- cbind(allcordsbind, t(error[[k]]))
+                            }
+                        }
+                        sub_classif <- coordinates_split(
+                            allcordsbind,
+                            membership$Z2[,q]
+                            )
+                        Z2 <- cbind(membership$Z2,membership$Z2[,q])
+                        Z2[,q] <- Z2[,q]*sub_classif
+                        Z2[,Q2+1] <- Z2[,Q2+1]*(1-sub_classif)
+                        result <- c(result, list(
+                                getRefClass(membership_name)(from_cc=list(Z1=membership$Z1,Z2=Z2))
+                            ))
+                    }
                 }
                 return(result)
             }
