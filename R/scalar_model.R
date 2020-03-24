@@ -64,33 +64,58 @@ setRefClass("scalar_model",
                 Q1<-dim(membership$Z1)[2]
                 Q2<-dim(membership$Z2)[2]
 
-                result <- list()
-                for(q in 1:Q1)
+                split1 <- TRUE
+                split2 <- TRUE
+                if(length(exploration_direction)!=0)
                 {
-                    sub_classif <- coordinates_split(
-                        cbind(error),
-                        membership$Z1[,q]
-                        )
-                    Z1 <- cbind(membership$Z1,membership$Z1[,q])
-                    Z1[,q] <- Z1[,q]*sub_classif
-                    Z1[,Q1+1] <- Z1[,Q1+1]*(1-sub_classif)
-                    result <- c(result, list(
-                            getRefClass(membership_name)(from_cc=list(Z1=Z1,Z2=membership$Z2))
-                        ))
+                    if(Q1<exploration_direction[1] || Q2<exploration_direction[2])
+                    {
+                        if(Q1/exploration_direction[1] < Q2/exploration_direction[2])
+                        {
+                            split1 <- TRUE
+                            split2 <- FALSE
+                        }
+                        else
+                        {
+                            split1 <- FALSE
+                            split2 <- TRUE
+                        }
+                    }
+                }
+
+                result <- list()
+                if(split1)
+                {
+                    for(q in 1:Q1)
+                    {
+                        sub_classif <- coordinates_split(
+                            cbind(error),
+                            membership$Z1[,q]
+                            )
+                        Z1 <- cbind(membership$Z1,membership$Z1[,q])
+                        Z1[,q] <- Z1[,q]*sub_classif
+                        Z1[,Q1+1] <- Z1[,Q1+1]*(1-sub_classif)
+                        result <- c(result, list(
+                                getRefClass(membership_name)(from_cc=list(Z1=Z1,Z2=membership$Z2))
+                            ))
+                    }
                 }
                 
-                for(q in 1:Q2)
+                if(split2)
                 {
-                    sub_classif <- coordinates_split(
-                        cbind(t(error)),
-                        membership$Z2[,q]
-                        )
-                    Z2 <- cbind(membership$Z2,membership$Z2[,q])
-                    Z2[,q] <- Z2[,q]*sub_classif
-                    Z2[,Q2+1] <- Z2[,Q2+1]*(1-sub_classif)
-                    result <- c(result, list(
-                            getRefClass(membership_name)(from_cc=list(Z1=membership$Z1,Z2=Z2))
-                        ))
+                    for(q in 1:Q2)
+                    {
+                        sub_classif <- coordinates_split(
+                            cbind(t(error)),
+                            membership$Z2[,q]
+                            )
+                        Z2 <- cbind(membership$Z2,membership$Z2[,q])
+                        Z2[,q] <- Z2[,q]*sub_classif
+                        Z2[,Q2+1] <- Z2[,Q2+1]*(1-sub_classif)
+                        result <- c(result, list(
+                                getRefClass(membership_name)(from_cc=list(Z1=membership$Z1,Z2=Z2))
+                            ))
+                    }
                 }
                 return(result)
             }
@@ -191,19 +216,43 @@ setRefClass("scalar_model",
             if(membership_name == "LBM")
             {
                 result <- list()
+                if(length(exploration_direction)!=0)
+                {
+                    theo <- Q*exploration_direction/sum(exploration_direction)
+                    itheo <- floor(theo)
+                    if(sum(itheo)<Q)
+                    {
+                        added <- which.max(theo-itheo)
+                        itheo[added] <- itheo[added]+1
+                    }
+                }
                 for(Q1 in 1:(Q-1))
                 {
-                    Q2<-Q-Q1
-                    if(Q1<=nrow(adj) && Q2<=ncol(adj))
+                    do_this <- TRUE
+                    if(length(exploration_direction)!=0)
                     {
-                        result[[Q1]] <- getRefClass(membership_name)(
-                            classif=list(
-                                blockmodelskmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
-                                blockmodelskmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)
-                            )
-                        )
+                        if(Q1 == itheo[1])
+                        {
+                            do_this <- TRUE
+                        }
+                        else
+                        {
+                            do_this <- FALSE
+                        }
                     }
-                    
+                    if(do_this)
+                    {
+                        Q2<-Q-Q1
+                        if(Q1<=nrow(adj) && Q2<=ncol(adj))
+                        {
+                            result[[Q1]] <- getRefClass(membership_name)(
+                                classif=list(
+                                    blockmodelskmeans(as.matrix(precomputed$eigen1$vectors[,1:Q1]),Q1),
+                                    blockmodelskmeans(as.matrix(precomputed$eigen2$vectors[,1:Q2]),Q2)
+                                )
+                            )
+                        }
+                    }
                 }
                 result <- result[!sapply(result,is.null)]
 

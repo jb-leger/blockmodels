@@ -19,6 +19,7 @@ setRefClass("model",
         exploration_factor = "numeric",
         explore_max = "numeric",
         explore_min = "numeric",
+        exploration_direction = "numeric",
         memberships = "list",           # found memberships,
         model_parameters = "list",         # found model parameters
         PL = "numeric",                 # Pseudo liklihood of found models
@@ -48,6 +49,23 @@ setRefClass("model",
                )
             {
                 stop(paste('Membership',membership_name,'unknown. Are you drunk?'))
+            }
+            if(membership_name != 'LBM' && length(exploration_direction) != 0)
+            {
+                stop(paste('Exploration direction can not be used with',membership_name,'. Stop trying stupid things.'))
+            }
+            if(length(exploration_direction) != 0)
+            {
+                if(
+                   length(exploration_direction) != 2
+                   ||
+                   exploration_direction[1]<1
+                   ||
+                   exploration_direction[2]<1
+                  )
+                {
+                    stop('Invalid exploration_direction.')
+                }
             }
             if(length(verbosity)==0)
             {
@@ -603,7 +621,36 @@ setRefClass("model",
             }
             else
             {
-                merged_membership<-membership$merges()
+                if(membership_name == "LBM")
+                {
+
+                    Q1<-dim(membership$Z1)[2]
+                    Q2<-dim(membership$Z2)[2]
+
+                    merge1 <- TRUE
+                    merge2 <- TRUE
+                    if(length(exploration_direction)!=0)
+                    {
+                        if(Q1>exploration_direction[1] || Q2>exploration_direction[2])
+                        {
+                            if(Q1/exploration_direction[1] > Q2/exploration_direction[2])
+                            {
+                                merge1 <- TRUE
+                                merge2 <- FALSE
+                            }
+                            else
+                            {
+                                merge1 <- FALSE
+                                merge2 <- TRUE
+                            }
+                        }
+                    }
+                    merged_membership<-membership$merges(merge1,merge2)
+                }
+                else
+                {
+                    merged_membership<-membership$merges()
+                }
                 digest_already_merged <<- c(digest_already_merged,list(d))
                 return(merged_membership)
             }
