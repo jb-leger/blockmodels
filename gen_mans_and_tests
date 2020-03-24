@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PERL5LIB=.
+
 for f in orig/man/*.Rd
 do
     perl orig/gen_man.pl $(basename $f .Rd)
