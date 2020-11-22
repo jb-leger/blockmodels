@@ -1,4 +1,4 @@
-useDynLib(blockmodels)
+useDynLib(blockmodels, .registration = TRUE)
 
 import(Rcpp)
 import(digest)
