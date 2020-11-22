@@ -2,5 +2,6 @@
 ^\.Rproj\.user$
 gen_mans_and_tests
 HOWTO_WRITE_A_MODEL
-mkpkg 
-orig
+mkpkg$
+orig$
+LICENSE
