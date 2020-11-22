@@ -14,6 +14,7 @@ parameters and node membership and impact vector of covariates}
     autosave='',
     plotting=character(0),
     exploration_factor=1.5,
+    exploration_direction=numeric(0),
     explore_min=4,
     explore_max=Inf,
     ncores=detectCores())}
