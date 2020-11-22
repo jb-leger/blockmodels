@@ -3,4 +3,4 @@
 gen_mans_and_tests
 HOWTO_WRITE_A_MODEL
 mkpkg 
-orig/
+orig
