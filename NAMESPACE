@@ -1,10 +1,14 @@
-useDynLib(blockmodels)
+useDynLib(blockmodels, .registration = TRUE)
 
 import(Rcpp)
 import(digest)
 import(parallel)
 import(methods)
 
+importFrom("graphics", "axis", "image")
+importFrom("grDevices", "hsv")
+importFrom("stats", "dist")
+    
 export(BM_bernoulli)
 export(BM_bernoulli_covariates)
 export(BM_bernoulli_covariates_fast)

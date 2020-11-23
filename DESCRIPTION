@@ -10,5 +10,12 @@ Description: Latent and Stochastic Block Model estimation by a Variational EM al
              Various probability distribution are provided (Bernoulli,
              Poisson...), with or without covariates.
 License: LGPL-2.1
-Depends: Rcpp (>= 0.10.6), parallel, methods, digest
+Depends: R (>= 3.4.0)
 LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 7.1.1
+Imports: 
+    Rcpp,
+    parallel, 
+    methods, 
+    digest
+    
