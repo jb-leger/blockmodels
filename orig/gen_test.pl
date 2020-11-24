@@ -3,7 +3,7 @@
 our $example=0;
 require "orig/conf.pl";
 
-my $code="require('blockmodels')\n";
+my $code="require('blockmodels')\nset.seed(12)\n";
 
 my $modelname=$ARGV[0];
 open(my $c,"<orig/code/$modelname.R");
