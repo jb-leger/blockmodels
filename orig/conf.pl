@@ -20,7 +20,7 @@ else
 
 
 $config{'MEMBERSHIP_ARG'} = "membership_type";
-$config{'MODEL_ARG'} = "verbosity=6,\n    autosave='',\n    plotting=character(0),\n    exploration_factor=1.5,\n    explore_min=4,\n    explore_max=Inf,\n    ncores=detectCores()";
+$config{'MODEL_ARG'} = "verbosity=6,\n    autosave='',\n    plotting=character(0),\n    exploration_factor=1.5,\n    exploration_direction=numeric(0),\n    explore_min=4,\n    explore_max=Inf,\n    ncores=detectCores()";
 $config{'SCALAR_MODEL_ARG'} = "adj";
 $config{'MULTIVARIATE_MODEL_ARG'} = "adj";
 
