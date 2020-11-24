@@ -1,4 +1,5 @@
 require('blockmodels')
+set.seed(12)
 ##
 ## SBM
 ##
