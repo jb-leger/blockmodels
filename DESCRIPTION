@@ -18,4 +18,5 @@ Imports:
     parallel, 
     methods, 
     digest
-    
+URL: https://github.com/jb-leger/blockmodels
+BugReports: https://github.com/jb-leger/blockmodels/issues
