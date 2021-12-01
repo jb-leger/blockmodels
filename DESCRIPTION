@@ -2,8 +2,8 @@ Package: blockmodels
 Type: Package
 Title: Latent and Stochastic Block Model Estimation by a 'V-EM'
         Algorithm
-Version: 1.1.4
-Date: 2020-11-23
+Version: 1.1.5
+Date: 2021-12-01
 Author: Jean-Benoist Leger <jbleger@hds.utc.fr>, Pierre Barbillon <pierre.barbillon@agroparistech.fr>, Julien Chiquet <julien.chiquet@inrae.fr>
 Maintainer: Jean-Benoist Leger <jbleger@hds.utc.fr>
 Description: Latent and Stochastic Block Model estimation by a Variational EM algorithm.
