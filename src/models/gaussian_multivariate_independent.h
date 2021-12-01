@@ -297,7 +297,7 @@ double m_step(SBM & membership,
     }
 
 
-    double PL= -.5*(membership.Z.n_rows * (membership.Z.n_rows-1))*accu(log(2*PI*model.sigma2));
+    double PL= -.5*(membership.Z.n_rows * (membership.Z.n_rows-1))*accu(log(2*M_PI*model.sigma2));
     for(unsigned int k=0;k<net.adj.n_slices;k++)
         PL+= -1.0/(2*model.sigma2(k))*all_accu(k);
 
@@ -378,7 +378,7 @@ double m_step(LBM & membership,
     }
 
 
-    double PL =  -.5*(membership.Z1.n_rows * membership.Z2.n_rows)*accu(log(2*PI*model.sigma2));
+    double PL =  -.5*(membership.Z1.n_rows * membership.Z2.n_rows)*accu(log(2*M_PI*model.sigma2));
     for(unsigned int k=0;k<net.adj.n_slices;k++) 
         PL +=  -1.0/(2*model.sigma2(k))*all_accu(k);
 

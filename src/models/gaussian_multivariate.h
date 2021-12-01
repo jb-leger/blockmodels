@@ -299,7 +299,7 @@ double m_step(SBM & membership,
     cube X_tilde = apply_matrix_on_tubes(model.iL, net.adjZ);
     cube mu_tilde = apply_matrix_on_tubes(model.iL, model.mu);
 
-    double PL= -.5*(membership.Z.n_rows * (membership.Z.n_rows-1) * net.adj.n_slices)*log(2*PI);
+    double PL= -.5*(membership.Z.n_rows * (membership.Z.n_rows-1) * net.adj.n_slices)*log(2*M_PI);
     PL += -.5*(membership.Z.n_rows * (membership.Z.n_rows-1)) * log( det(model.Sigma));
     PL += -.5 * accu(X_tilde % X_tilde);
 
@@ -387,7 +387,7 @@ double m_step(LBM & membership,
     cube X_tilde = apply_matrix_on_tubes(model.iL, net.adj);
     cube mu_tilde = apply_matrix_on_tubes(model.iL, model.mu);
 
-    double PL= -.5*(membership.Z1.n_rows * membership.Z2.n_rows * net.adj.n_slices)*log(2*PI);
+    double PL= -.5*(membership.Z1.n_rows * membership.Z2.n_rows * net.adj.n_slices)*log(2*M_PI);
     PL += -.5*(membership.Z1.n_rows * membership.Z2.n_rows) * log( det(model.Sigma));
     PL += -.5 * accu(X_tilde % X_tilde);
 

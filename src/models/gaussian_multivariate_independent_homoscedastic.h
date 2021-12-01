@@ -290,7 +290,7 @@ double m_step(SBM & membership,
 
     return
         (
-          -.5*(membership.Z.n_rows * (membership.Z.n_rows-1) * net.adj.n_slices)*log(2*PI*model.sigma2)
+          -.5*(membership.Z.n_rows * (membership.Z.n_rows-1) * net.adj.n_slices)*log(2*M_PI*model.sigma2)
           -1.0/(2*model.sigma2)*all_accu
         );
 }
@@ -370,7 +370,7 @@ double m_step(LBM & membership,
 
     return
         (
-          -.5*(membership.Z1.n_rows * membership.Z2.n_rows * net.adj.n_slices)*log(2*PI*model.sigma2)
+          -.5*(membership.Z1.n_rows * membership.Z2.n_rows * net.adj.n_slices)*log(2*M_PI*model.sigma2)
           -1.0/(2*model.sigma2)*all_accu
         );
 }
