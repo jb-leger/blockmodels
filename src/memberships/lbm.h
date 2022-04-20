@@ -34,9 +34,9 @@ struct LBM
     }
 
     inline
-    double entropy() // TODO verif VB
+    double entropy()
     {
-        return accu( Z1 % log(Z1) ) + accu(Z2 % log(Z2));
+        return - accu( Z1 % log(Z1) ) - accu(Z2 % log(Z2));
     }
 
     template<class model_type, class network_type>
